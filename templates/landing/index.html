@@ -1,0 +1,169 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Polloni Flow | Automação e software para negócios mais ágeis</title>
+    <meta name="description" content="Polloni Flow cria automações, softwares e integrações para empresas que precisam ganhar velocidade operacional.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'landing/css/styles.css' %}">
+</head>
+<body>
+    <canvas class="network-canvas" id="networkCanvas" aria-hidden="true"></canvas>
+
+    <header class="site-header" data-reveal>
+        <a class="brand" href="#top" aria-label="Polloni Flow">
+            <span class="brand-mark">PF</span>
+            <span>Polloni Flow</span>
+        </a>
+        <nav class="nav-links" aria-label="Navegação principal">
+            <a href="#solucoes">Soluções</a>
+            <a href="#processo">Processo</a>
+            <a href="#contato">Contato</a>
+        </nav>
+        <a class="header-action" href="https://wa.me/5514988208134?text=Ol%C3%A1%2C%20quero%20automatizar%20processos%20com%20a%20Polloni%20Flow" target="_blank" rel="noreferrer">
+            Falar agora
+        </a>
+    </header>
+
+    <main id="top">
+        <section class="hero">
+            <div class="hero-media" aria-hidden="true">
+                <img src="{% static 'landing/img/hero-automation.png' %}" alt="">
+            </div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content" data-reveal>
+                <p class="eyebrow">Software, automação e integrações</p>
+                <h1>Polloni Flow</h1>
+                <p class="slogan">Automação e software para negócios mais ágeis.</p>
+                <p class="hero-copy">
+                    Transforme processos manuais em fluxos digitais conectados. Criamos sistemas,
+                    painéis, integrações e automações sob medida para reduzir retrabalho, acelerar
+                    equipes e dar mais controle ao seu negócio.
+                </p>
+                <div class="hero-actions">
+                    <a class="btn primary" href="#contato">Solicitar diagnóstico</a>
+                    <a class="btn secondary" href="#solucoes">Ver soluções</a>
+                </div>
+                <div class="signal-row" aria-label="Áreas atendidas">
+                    <span>APIs</span>
+                    <span>Dashboards</span>
+                    <span>CRM</span>
+                    <span>ERP</span>
+                    <span>RPA</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="metrics section-band" aria-label="Indicadores">
+            <div class="metric" data-reveal>
+                <strong>24/7</strong>
+                <span>rotinas automáticas trabalhando</span>
+            </div>
+            <div class="metric" data-reveal>
+                <strong>-80%</strong>
+                <span>menos tarefas repetitivas</span>
+            </div>
+            <div class="metric" data-reveal>
+                <strong>+1</strong>
+                <span>operação conectada em um só fluxo</span>
+            </div>
+        </section>
+
+        <section class="section" id="solucoes">
+            <div class="section-heading" data-reveal>
+                <p class="eyebrow">O que a Polloni Flow entrega</p>
+                <h2>Sistemas e automações que conversam com a rotina da sua empresa.</h2>
+            </div>
+            <div class="solution-grid">
+                <article class="solution-card" data-reveal>
+                    <span class="card-icon">01</span>
+                    <h3>Automação de processos</h3>
+                    <p>Fluxos para eliminar digitação manual, alertas esquecidos, planilhas soltas e tarefas que travam a equipe.</p>
+                </article>
+                <article class="solution-card" data-reveal>
+                    <span class="card-icon">02</span>
+                    <h3>Sistemas sob medida</h3>
+                    <p>Aplicações web internas, portais, cadastros, aprovações e ferramentas criadas para o seu jeito de operar.</p>
+                </article>
+                <article class="solution-card" data-reveal>
+                    <span class="card-icon">03</span>
+                    <h3>Integração entre plataformas</h3>
+                    <p>Conectamos CRM, ERP, WhatsApp, e-mail, bancos de dados e APIs para que a informação flua sem retrabalho.</p>
+                </article>
+                <article class="solution-card" data-reveal>
+                    <span class="card-icon">04</span>
+                    <h3>Painéis e inteligência</h3>
+                    <p>Dashboards para acompanhar vendas, financeiro, operação e produtividade com dados claros para decidir rápido.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="flow-section section-band">
+            <div class="flow-copy" data-reveal>
+                <p class="eyebrow">Fluxo operacional</p>
+                <h2>Da tarefa manual ao processo inteligente.</h2>
+                <p>
+                    Mapeamos a rotina, encontramos gargalos e criamos um caminho digital para cada etapa.
+                    O resultado é uma operação mais previsível, integrada e pronta para crescer.
+                </p>
+            </div>
+            <div class="automation-panel" data-reveal aria-label="Fluxo de automação">
+                <div class="node active">Entrada</div>
+                <div class="line"></div>
+                <div class="node">Validação</div>
+                <div class="line"></div>
+                <div class="node">Sistema</div>
+                <div class="line"></div>
+                <div class="node active">Resultado</div>
+            </div>
+        </section>
+
+        <section class="section" id="processo">
+            <div class="section-heading compact" data-reveal>
+                <p class="eyebrow">Método</p>
+                <h2>Um processo claro para sair da ideia e chegar no software funcionando.</h2>
+            </div>
+            <div class="process-list">
+                <div class="process-item" data-reveal>
+                    <span>Diagnóstico</span>
+                    <p>Entendemos o fluxo atual, as perdas de tempo e o que precisa ser medido.</p>
+                </div>
+                <div class="process-item" data-reveal>
+                    <span>Protótipo</span>
+                    <p>Definimos telas, integrações e prioridades para validar antes de construir tudo.</p>
+                </div>
+                <div class="process-item" data-reveal>
+                    <span>Implementação</span>
+                    <p>Desenvolvemos, testamos e conectamos a solução aos sistemas que você já usa.</p>
+                </div>
+                <div class="process-item" data-reveal>
+                    <span>Evolução</span>
+                    <p>Acompanhamos melhorias para que o sistema continue acompanhando o crescimento.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section" id="contato" data-reveal>
+            <div>
+                <p class="eyebrow">Vamos automatizar?</p>
+                <h2>Conte qual processo está tomando tempo da sua equipe.</h2>
+                <p>A Polloni Flow transforma esse gargalo em um fluxo digital mais rápido, rastreável e escalável.</p>
+            </div>
+            <a class="btn primary large" href="https://wa.me/5514988208134?text=Ol%C3%A1%2C%20quero%20um%20diagn%C3%B3stico%20para%20automa%C3%A7%C3%A3o%20e%20software" target="_blank" rel="noreferrer">
+                Chamar no WhatsApp
+            </a>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <span>Polloni Flow</span>
+        <span>Automação e software para negócios mais ágeis.</span>
+    </footer>
+
+    <script src="{% static 'landing/js/main.js' %}"></script>
+</body>
+</html>
