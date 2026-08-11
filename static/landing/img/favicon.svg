@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Polloni Flow">
+    <!-- O mesmo selo "PF" do cabecalho do site: quadrado arredondado com o
+         gradiente da marca e as letras em vazado. As letras sao tracados, nao
+         texto, para desenhar igual em qualquer maquina, com ou sem a fonte
+         Inter instalada. -->
+    <defs>
+        <linearGradient id="marca" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#42d9ff"/>
+            <stop offset="0.7" stop-color="#59e39b"/>
+            <stop offset="1" stop-color="#b9f25d"/>
+        </linearGradient>
+    </defs>
+    <rect width="64" height="64" rx="14" fill="url(#marca)"/>
+    <g fill="none" stroke="#04111d" stroke-width="6.5" stroke-linecap="butt" stroke-linejoin="miter">
+        <path d="M15 45.5 V19.5 H23 a6 6 0 0 1 0 12 H15"/>
+        <path d="M39 45.5 V19.5 H49"/>
+        <path d="M39 31.5 H46.5"/>
+    </g>
+</svg>
