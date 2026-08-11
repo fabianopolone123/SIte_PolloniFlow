@@ -1,0 +1,658 @@
+/* Painel de relatorios da Polloni Flow.
+ *
+ * As cores dos graficos NAO sao as cores da marca. O ciano e o verde do site
+ * sao claros demais para virar dado sobre fundo escuro (ficam fora da faixa de
+ * luminosidade e quase iguais entre si para quem nao distingue cores). As tres
+ * abaixo foram conferidas contra a superficie #0b1d2b: separacao para
+ * daltonismo de protanopia/deuteranopia acima do alvo e contraste acima de
+ * 3:1. O ciano da marca continua na interface (titulos, botoes), nunca no dado.
+ */
+:root {
+    --fundo: #06111f;
+    --superficie: #0b1d2b;
+    --superficie-2: #102638;
+    --linha: rgba(255, 255, 255, 0.14);
+    --texto: #f7fbff;
+    --apagado: #a9bacb;
+    --fraco: #7d90a3;
+    --marca: #42d9ff;
+
+    --organico: #3987e5;
+    --anuncio: #d95926;
+    --cliques: #199e70;
+
+    --raio: 14px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--texto);
+    background:
+        radial-gradient(circle at 88% 4%, rgba(66, 217, 255, 0.14), transparent 26rem),
+        linear-gradient(160deg, #06111f 0%, #0a1727 55%, #07101c 100%);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* ---------- estrutura ---------- */
+
+.topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px max(16px, calc((100vw - 1180px) / 2));
+    border-bottom: 1px solid var(--linha);
+    background: rgba(6, 17, 31, 0.86);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.marca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+}
+
+.marca-selo {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--marca), var(--cliques));
+    color: #04121a;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.topo-direita {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--apagado);
+    font-size: 13px;
+}
+
+.conteudo {
+    padding: 24px max(16px, calc((100vw - 1180px) / 2)) 64px;
+    display: grid;
+    gap: 26px;
+}
+
+/* Sem isto, uma tabela larga empurra a largura da pagina inteira no celular em
+   vez de rolar dentro da propria caixa: itens de grid nascem com
+   min-width: auto, que é o tamanho mínimo do conteúdo. */
+.secao,
+.rolagem,
+.quadro,
+.grafico {
+    min-width: 0;
+}
+
+.secao > h2 {
+    margin: 0 0 4px;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+}
+
+.secao > .ajuda {
+    margin: 0 0 14px;
+    color: var(--apagado);
+    font-size: 13px;
+    max-width: 70ch;
+}
+
+.secao > .ajuda.periodo {
+    margin: 12px 0 0;
+}
+
+.secao > .ajuda b {
+    color: var(--texto);
+}
+
+code {
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 0.92em;
+}
+
+/* ---------- botoes e filtros ---------- */
+
+.botao {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border: 1px solid var(--linha);
+    border-radius: 999px;
+    background: var(--superficie);
+    color: var(--texto);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.botao:hover {
+    border-color: rgba(66, 217, 255, 0.5);
+}
+
+.filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.filtros .rotulo {
+    margin-right: 4px;
+    color: var(--apagado);
+    font-size: 13px;
+}
+
+.filtro {
+    padding: 7px 15px;
+    border: 1px solid var(--linha);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--apagado);
+}
+
+.filtro.ativo {
+    border-color: var(--marca);
+    background: rgba(66, 217, 255, 0.14);
+    color: var(--texto);
+}
+
+/* ---------- cartoes de numero ---------- */
+
+.cartoes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+}
+
+.cartao {
+    padding: 18px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+    background: var(--superficie);
+}
+
+.cartao .titulo {
+    margin: 0;
+    color: var(--apagado);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.cartao .numero {
+    display: block;
+    margin: 8px 0 2px;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+.cartao .nota {
+    margin: 0;
+    color: var(--fraco);
+    font-size: 12.5px;
+}
+
+/* ---------- comparativo anuncio x organico ---------- */
+
+.comparativo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+}
+
+.comparativo .cartao {
+    border-top: 3px solid var(--linha);
+}
+
+.cartao.anuncio {
+    border-top-color: var(--anuncio);
+}
+
+.cartao.organico {
+    border-top-color: var(--organico);
+}
+
+.cartao .cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.marcador {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex: none;
+}
+
+.marcador.anuncio {
+    background: var(--anuncio);
+}
+
+.marcador.organico {
+    background: var(--organico);
+}
+
+.marcador.cliques {
+    background: var(--cliques);
+}
+
+.miudos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    margin: 12px 0 0;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--linha);
+    color: var(--apagado);
+    font-size: 13px;
+}
+
+.miudos b {
+    color: var(--texto);
+}
+
+/* ---------- grafico de barras por dia ---------- */
+
+.quadro {
+    padding: 18px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+    background: var(--superficie);
+}
+
+.legenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-bottom: 14px;
+    color: var(--apagado);
+    font-size: 13px;
+}
+
+.legenda span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.grafico {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 214px;
+    padding: 12px 0 2px;
+    border-bottom: 1px solid var(--linha);
+    overflow-x: auto;
+}
+
+.dia {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex: 1 0 auto;
+    min-width: 9px;
+    height: 100%;
+    cursor: default;
+}
+
+/* Empilhamento: anuncio embaixo, organico em cima, com 2px de respiro entre
+   os dois para as cores nunca encostarem. */
+.pilha {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 2px;
+    /* Os 2px do respiro saem da altura, senão a barra mais alta do período
+       ultrapassaria o topo do gráfico. */
+    height: calc(100% - 2px);
+    justify-content: flex-start;
+}
+
+.fatia {
+    display: block;
+    flex: none;
+    border-radius: 3px 3px 0 0;
+    min-height: 2px;
+}
+
+.fatia.anuncio {
+    background: var(--anuncio);
+}
+
+.fatia.organico {
+    background: var(--organico);
+}
+
+.vazio {
+    display: block;
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.dia:hover .pilha {
+    filter: brightness(1.18);
+}
+
+/* Balao de detalhe no passar do mouse. O alvo e a coluna inteira, nao so a
+   barra, para nao exigir pontaria. */
+/* O balao fica DENTRO da area do grafico, encostado no topo. Precisa ser assim:
+   com overflow-x: auto o navegador tambem corta o que sai por cima, entao um
+   balao posicionado acima da caixa simplesmente sumiria. */
+.dica {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: grid;
+    gap: 2px;
+    padding: 9px 12px;
+    width: max-content;
+    max-width: 210px;
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+    background: #0d2233;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    color: var(--texto);
+    font-size: 12.5px;
+    line-height: 1.35;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+}
+
+.dia:hover .dica,
+.dia:focus-within .dica {
+    opacity: 1;
+}
+
+/* Nas pontas do grafico o balao centralizado sairia pela lateral e seria
+   cortado; nesses casos ele encosta na borda. */
+.dia:nth-child(-n + 4) .dica {
+    left: 0;
+    transform: none;
+}
+
+.dia:nth-last-child(-n + 4) .dica {
+    left: auto;
+    right: 0;
+    transform: none;
+}
+
+.dica .data {
+    font-weight: 700;
+}
+
+.dica .item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--apagado);
+}
+
+.dica .item b {
+    color: var(--texto);
+}
+
+.eixo {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+    color: var(--fraco);
+    font-size: 11.5px;
+}
+
+.teto {
+    margin: 0 0 8px;
+    color: var(--fraco);
+    font-size: 12px;
+}
+
+/* ---------- barras horizontais de cliques ---------- */
+
+.eventos {
+    display: grid;
+    gap: 12px;
+}
+
+.evento {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px 14px;
+}
+
+.evento .nome {
+    font-size: 13.5px;
+}
+
+.evento .valor {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+}
+
+.evento .trilho {
+    grid-column: 1 / -1;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+}
+
+.evento .preenchimento {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--cliques);
+}
+
+.evento.principal .nome {
+    font-weight: 700;
+}
+
+.evento .valor small {
+    color: var(--fraco);
+    font-size: 11.5px;
+    font-weight: 500;
+}
+
+/* ---------- tabelas ---------- */
+
+.rolagem {
+    overflow-x: auto;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+    background: var(--superficie);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    white-space: nowrap;
+}
+
+th,
+td {
+    padding: 11px 14px;
+    text-align: right;
+    border-bottom: 1px solid var(--linha);
+}
+
+th:first-child,
+td:first-child {
+    text-align: left;
+    white-space: normal;
+    min-width: 150px;
+}
+
+thead th {
+    color: var(--apagado);
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover td {
+    background: var(--superficie-2);
+}
+
+td.numero {
+    font-variant-numeric: tabular-nums;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.fatia-linha {
+    display: block;
+    height: 4px;
+    margin-top: 6px;
+    border-radius: 2px;
+    background: var(--organico);
+}
+
+.fatia-linha.anuncio {
+    background: var(--anuncio);
+}
+
+.vazio-aviso {
+    padding: 22px 18px;
+    color: var(--apagado);
+    font-size: 13.5px;
+}
+
+/* ---------- tela de entrada ---------- */
+
+.entrada {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.entrada form {
+    width: min(100%, 380px);
+    padding: 28px;
+    border: 1px solid var(--linha);
+    border-radius: 18px;
+    background: var(--superficie);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+}
+
+.entrada h1 {
+    margin: 16px 0 4px;
+    font-size: 21px;
+}
+
+.entrada p.ajuda {
+    margin: 0 0 22px;
+    color: var(--apagado);
+    font-size: 13.5px;
+}
+
+.campo {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.campo span {
+    color: var(--apagado);
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.campo input {
+    padding: 11px 13px;
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+    background: #081826;
+    color: var(--texto);
+    font: inherit;
+}
+
+.campo input:focus {
+    outline: 2px solid var(--marca);
+    outline-offset: 1px;
+}
+
+.entrada button {
+    width: 100%;
+    margin-top: 6px;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--marca), var(--cliques));
+    color: #04121a;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.erro {
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border: 1px solid rgba(230, 103, 103, 0.5);
+    border-radius: 10px;
+    background: rgba(230, 103, 103, 0.12);
+    font-size: 13.5px;
+}
+
+.voltar {
+    display: inline-block;
+    margin-top: 16px;
+    color: var(--apagado);
+    font-size: 13px;
+}
+
+@media (max-width: 640px) {
+    .cartao .numero {
+        font-size: 28px;
+    }
+
+    .conteudo {
+        gap: 22px;
+    }
+}

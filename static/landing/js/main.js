@@ -76,3 +76,28 @@ function drawNetwork() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 drawNetwork();
+
+// Avisa o painel de relatorios quando alguem clica num botao marcado com
+// data-evento. Usa sendBeacon porque o clique no WhatsApp pode tirar a pessoa
+// da pagina antes de um pedido comum terminar.
+const medicao = document.body.dataset;
+
+if (medicao.visita && medicao.eventoUrl) {
+    document.querySelectorAll("[data-evento]").forEach((alvo) => {
+        alvo.addEventListener("click", () => {
+            const dados = new FormData();
+            dados.append("evento", alvo.dataset.evento);
+            dados.append("visita", medicao.visita);
+
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(medicao.eventoUrl, dados);
+            } else {
+                fetch(medicao.eventoUrl, {
+                    method: "POST",
+                    body: dados,
+                    keepalive: true,
+                }).catch(() => {});
+            }
+        });
+    });
+}

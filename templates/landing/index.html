@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'landing/css/styles.css' %}">
 </head>
-<body>
+<body data-visita="{{ visita.id|default_if_none:'' }}" data-evento-url="{% url 'evento' %}">
     <canvas class="network-canvas" id="networkCanvas" aria-hidden="true"></canvas>
 
     <header class="site-header" data-reveal>
@@ -20,11 +20,11 @@
             <span>Polloni Flow</span>
         </a>
         <nav class="nav-links" aria-label="Navegação principal">
-            <a href="#solucoes">Soluções</a>
-            <a href="#processo">Processo</a>
-            <a href="#contato">Contato</a>
+            <a href="#solucoes" data-evento="menu_solucoes">Soluções</a>
+            <a href="#processo" data-evento="menu_processo">Processo</a>
+            <a href="#contato" data-evento="menu_contato">Contato</a>
         </nav>
-        <a class="header-action" href="https://wa.me/5514988208134?text=Ol%C3%A1%2C%20quero%20automatizar%20processos%20com%20a%20Polloni%20Flow" target="_blank" rel="noreferrer">
+        <a class="header-action" href="https://wa.me/5514988208134?text=Ol%C3%A1%2C%20quero%20automatizar%20processos%20com%20a%20Polloni%20Flow" target="_blank" rel="noreferrer" data-evento="whatsapp_topo">
             Falar agora
         </a>
     </header>
@@ -45,8 +45,8 @@
                     equipes e dar mais controle ao seu negócio.
                 </p>
                 <div class="hero-actions">
-                    <a class="btn primary" href="#contato">Solicitar diagnóstico</a>
-                    <a class="btn secondary" href="#solucoes">Ver soluções</a>
+                    <a class="btn primary" href="#contato" data-evento="diagnostico">Solicitar diagnóstico</a>
+                    <a class="btn secondary" href="#solucoes" data-evento="ver_solucoes">Ver soluções</a>
                 </div>
                 <div class="signal-row" aria-label="Áreas atendidas">
                     <span>APIs</span>
@@ -153,7 +153,7 @@
                 <h2>Conte qual processo está tomando tempo da sua equipe.</h2>
                 <p>A Polloni Flow transforma esse gargalo em um fluxo digital mais rápido, rastreável e escalável.</p>
             </div>
-            <a class="btn primary large" href="https://wa.me/5514988208134?text=Ol%C3%A1%2C%20quero%20um%20diagn%C3%B3stico%20para%20automa%C3%A7%C3%A3o%20e%20software" target="_blank" rel="noreferrer">
+            <a class="btn primary large" href="https://wa.me/5514988208134?text=Ol%C3%A1%2C%20quero%20um%20diagn%C3%B3stico%20para%20automa%C3%A7%C3%A3o%20e%20software" target="_blank" rel="noreferrer" data-evento="whatsapp_final">
                 Chamar no WhatsApp
             </a>
         </section>

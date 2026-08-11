@@ -1,0 +1,14 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% block titulo %}Painel{% endblock %} | Polloni Flow</title>
+    <link rel="stylesheet" href="{% static 'painel/css/painel.css' %}">
+</head>
+<body>
+{% block corpo %}{% endblock %}
+</body>
+</html>

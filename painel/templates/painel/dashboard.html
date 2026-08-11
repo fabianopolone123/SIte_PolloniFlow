@@ -1,0 +1,294 @@
+{% extends "painel/base.html" %}
+{% load l10n %}
+
+{% block titulo %}Relatórios{% endblock %}
+
+{% block corpo %}
+<header class="topo">
+    <div class="marca">
+        <span class="marca-selo">PF</span>
+        <span>Relatórios · Polloni Flow</span>
+    </div>
+    <div class="topo-direita">
+        <span>{{ user.username }}</span>
+        <a class="botao" href="/">Ver o site</a>
+        <form method="post" action="{% url 'sair' %}">
+            {% csrf_token %}
+            <button class="botao" type="submit">Sair</button>
+        </form>
+    </div>
+</header>
+
+<main class="conteudo">
+
+    <section class="secao">
+        <div class="filtros">
+            <span class="rotulo">Período:</span>
+            {% for valor, rotulo in periodos %}
+                <a class="filtro {% if valor == dias %}ativo{% endif %}" href="?dias={{ valor|unlocalize }}">{{ rotulo }}</a>
+            {% endfor %}
+        </div>
+        <p class="ajuda periodo">
+            De {{ primeiro_dia|date:"d/m/Y" }} a {{ ultimo_dia|date:"d/m/Y" }}.
+            Robôs de busca e de pré-visualização de link ({{ resumo.robos }} no período)
+            ficam de fora de todos os números.
+        </p>
+    </section>
+
+    <section class="secao">
+        <h2>Resumo do período</h2>
+        <div class="cartoes">
+            <div class="cartao">
+                <p class="titulo">Visitas</p>
+                <span class="numero">{{ resumo.visitas }}</span>
+                <p class="nota">aberturas da página</p>
+            </div>
+            <div class="cartao">
+                <p class="titulo">Pessoas</p>
+                <span class="numero">{{ resumo.pessoas }}</span>
+                <p class="nota">visitantes diferentes</p>
+            </div>
+            <div class="cartao">
+                <p class="titulo">Cliques no WhatsApp</p>
+                <span class="numero">{{ resumo.cliques }}</span>
+                <p class="nota">botões “Falar agora” e “Chamar no WhatsApp”</p>
+            </div>
+            <div class="cartao">
+                <p class="titulo">Conversão</p>
+                <span class="numero">{{ resumo.taxa|floatformat:1 }}%</span>
+                <p class="nota">das visitas terminaram em clique para conversar</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="secao">
+        <h2>Anúncio ou orgânico</h2>
+        <p class="ajuda">
+            <b>Anúncio</b> é quem chegou por um link de campanha paga — o endereço vem com
+            marcação do Instagram, do Facebook ou do Google. <b>Orgânico</b> é todo o resto:
+            busca, redes sociais sem impulsionamento, links em outros sites e quem digitou o
+            endereço direto.
+        </p>
+        <div class="comparativo">
+            <div class="cartao anuncio">
+                <div class="cabecalho">
+                    <i class="marcador anuncio"></i>
+                    <p class="titulo">Anúncio pago</p>
+                </div>
+                <span class="numero">{{ comparativo.anuncio.visitas }}</span>
+                <p class="nota">{{ comparativo.anuncio.fatia|floatformat:1 }}% das visitas do período</p>
+                <div class="miudos">
+                    <span><b>{{ comparativo.anuncio.pessoas }}</b> pessoas</span>
+                    <span><b>{{ comparativo.anuncio.cliques }}</b> cliques no WhatsApp</span>
+                    <span><b>{{ comparativo.anuncio.taxa|floatformat:1 }}%</b> de conversão</span>
+                </div>
+            </div>
+            <div class="cartao organico">
+                <div class="cabecalho">
+                    <i class="marcador organico"></i>
+                    <p class="titulo">Orgânico</p>
+                </div>
+                <span class="numero">{{ comparativo.organico.visitas }}</span>
+                <p class="nota">{{ comparativo.organico.fatia|floatformat:1 }}% das visitas do período</p>
+                <div class="miudos">
+                    <span><b>{{ comparativo.organico.pessoas }}</b> pessoas</span>
+                    <span><b>{{ comparativo.organico.cliques }}</b> cliques no WhatsApp</span>
+                    <span><b>{{ comparativo.organico.taxa|floatformat:1 }}%</b> de conversão</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="secao">
+        <h2>Visitas por dia</h2>
+        <div class="quadro">
+            <div class="legenda">
+                <span><i class="marcador anuncio"></i> Anúncio</span>
+                <span><i class="marcador organico"></i> Orgânico</span>
+            </div>
+            <p class="teto">
+                Dia mais movimentado do período: {{ teto }} visita{{ teto|pluralize }}.
+                Passe o mouse (ou toque) numa barra para ver o dia.
+            </p>
+            <div class="grafico">
+                {% for linha in serie %}
+                <div class="dia" tabindex="0">
+                    <span class="dica">
+                        <span class="data">{{ linha.dia|date:"d/m/Y" }}</span>
+                        <span class="item"><i class="marcador anuncio"></i> Anúncio: <b>{{ linha.anuncio }}</b></span>
+                        <span class="item"><i class="marcador organico"></i> Orgânico: <b>{{ linha.organico }}</b></span>
+                        <span class="item"><i class="marcador cliques"></i> WhatsApp: <b>{{ linha.cliques }}</b></span>
+                    </span>
+                    {% if linha.visitas %}
+                        <span class="pilha">
+                            {% if linha.anuncio %}<i class="fatia anuncio" style="height:{{ linha.anuncio_altura|unlocalize }}%"></i>{% endif %}
+                            {% if linha.organico %}<i class="fatia organico" style="height:{{ linha.organico_altura|unlocalize }}%"></i>{% endif %}
+                        </span>
+                    {% else %}
+                        <span class="vazio"></span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="eixo">
+                <span>{{ primeiro_dia|date:"d/m" }}</span>
+                <span>{{ ultimo_dia|date:"d/m" }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="secao">
+        <h2>De onde vieram</h2>
+        <p class="ajuda">A barra fina embaixo do nome mostra a fatia daquele canal no total de visitas.</p>
+        <div class="rolagem">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Canal</th>
+                        <th>Visitas</th>
+                        <th>Pessoas</th>
+                        <th>Cliques no WhatsApp</th>
+                        <th>Conversão</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for linha in por_canal %}
+                    <tr>
+                        <td>
+                            <span class="chip">
+                                <i class="marcador {% if linha.codigo == 'anuncio' %}anuncio{% else %}organico{% endif %}"></i>
+                                {{ linha.canal }}
+                            </span>
+                            <i class="fatia-linha {% if linha.codigo == 'anuncio' %}anuncio{% endif %}" style="width:{{ linha.fatia|unlocalize }}%"></i>
+                        </td>
+                        <td class="numero">{{ linha.visitas }}</td>
+                        <td class="numero">{{ linha.pessoas }}</td>
+                        <td class="numero">{{ linha.cliques }}</td>
+                        <td class="numero">{{ linha.taxa|floatformat:1 }}%</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="vazio-aviso">Nenhuma visita registrada neste período.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="secao">
+        <h2>Campanhas de anúncio</h2>
+        <p class="ajuda">
+            Uma linha por campanha e por criativo, lidos da marcação <code>utm</code> que o
+            Instagram e o Google colocam no link. Se aparecer “(sem nome de campanha)”, o
+            anúncio foi reconhecido pelo identificador de clique, mas sem nome definido.
+        </p>
+        <div class="rolagem">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campanha</th>
+                        <th>Criativo</th>
+                        <th>Origem</th>
+                        <th>Visitas</th>
+                        <th>Pessoas</th>
+                        <th>Cliques</th>
+                        <th>Conversão</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for linha in campanhas %}
+                    <tr>
+                        <td>{{ linha.campanha }}</td>
+                        <td>{{ linha.conteudo }}</td>
+                        <td>{{ linha.origem }}</td>
+                        <td class="numero">{{ linha.visitas }}</td>
+                        <td class="numero">{{ linha.pessoas }}</td>
+                        <td class="numero">{{ linha.cliques }}</td>
+                        <td class="numero">{{ linha.taxa|floatformat:1 }}%</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="vazio-aviso">Nenhuma visita vinda de anúncio neste período.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="secao">
+        <h2>Cliques nos botões</h2>
+        <p class="ajuda">Quantas vezes cada botão da página foi clicado. Os dois primeiros levam para a conversa no WhatsApp.</p>
+        <div class="quadro eventos">
+            {% for linha in por_evento %}
+            <div class="evento {% if linha.whatsapp %}principal{% endif %}">
+                <span class="nome">{{ linha.rotulo }}</span>
+                <span class="valor">{{ linha.total }}{% if linha.pessoas %} <small>({{ linha.pessoas }} pessoas)</small>{% endif %}</span>
+                <span class="trilho"><i class="preenchimento" style="width:{{ linha.largura|unlocalize }}%"></i></span>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="secao">
+        <h2>Aparelhos</h2>
+        <div class="rolagem">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aparelho</th>
+                        <th>Visitas</th>
+                        <th>Fatia</th>
+                        <th>Cliques no WhatsApp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for linha in por_dispositivo %}
+                    <tr>
+                        <td>{{ linha.dispositivo }}</td>
+                        <td class="numero">{{ linha.visitas }}</td>
+                        <td class="numero">{{ linha.fatia|floatformat:1 }}%</td>
+                        <td class="numero">{{ linha.cliques }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="vazio-aviso">Nada registrado neste período.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="secao">
+        <h2>Últimas visitas</h2>
+        <div class="rolagem">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quando</th>
+                        <th>Canal</th>
+                        <th>Campanha ou origem</th>
+                        <th>Aparelho</th>
+                        <th>Clicou no WhatsApp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for visita in ultimas %}
+                    <tr>
+                        <td>{{ visita.criado_em|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <span class="chip">
+                                <i class="marcador {% if visita.canal == 'anuncio' %}anuncio{% else %}organico{% endif %}"></i>
+                                {{ visita.get_canal_display }}
+                            </span>
+                        </td>
+                        <td>{% firstof visita.campanha visita.origem "—" %}</td>
+                        <td>{{ visita.get_dispositivo_display }}</td>
+                        <td class="numero">{% if visita.cliques_whatsapp %}sim{% else %}—{% endif %}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="vazio-aviso">Nenhuma visita registrada neste período.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+{% endblock %}
