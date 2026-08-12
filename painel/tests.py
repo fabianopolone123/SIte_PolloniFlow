@@ -1,7 +1,9 @@
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from .coleta import COOKIE_ORIGEM, COOKIE_VISITANTE
+from django.core.management import call_command
+
+from .coleta import COOKIE_INTERNO, COOKIE_ORIGEM, COOKIE_VISITANTE
 from .models import Canal, Clique, Dispositivo, Visita
 
 CELULAR = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0) AppleWebKit/605 Version/17 Mobile Safari/604"
@@ -102,25 +104,78 @@ class RegistroDeCliques(TestCase):
 
 
 class AcessoAoPainel(TestCase):
+    def setUp(self):
+        call_command("criar_painel", verbosity=0)
+
     def test_painel_exige_entrar(self):
         resposta = Client().get("/painel/")
         self.assertEqual(resposta.status_code, 302)
         self.assertIn("/painel/entrar/", resposta["Location"])
 
     def test_entra_com_o_acesso_criado_pelo_comando(self):
-        from django.core.management import call_command
-
-        call_command("criar_painel", verbosity=0)
-        cliente = Client()
-        resposta = cliente.post(
+        resposta = self.client.post(
             "/painel/entrar/", {"usuario": "fabiano", "senha": "1234"}, follow=True
         )
         self.assertEqual(resposta.status_code, 200)
         self.assertContains(resposta, "Resumo do período")
 
     def test_senha_errada_nao_entra(self):
-        from django.core.management import call_command
-
-        call_command("criar_painel", verbosity=0)
         resposta = Client().post("/painel/entrar/", {"usuario": "fabiano", "senha": "nao"})
         self.assertContains(resposta, "incorretos")
+
+
+class VisitasDoDono(TestCase):
+    """As visitas de quem cuida do site não podem virar número de cliente."""
+
+    def setUp(self):
+        call_command("criar_painel", verbosity=0)
+
+    def visitar(self, cliente=None):
+        (cliente or self.client).get("/", HTTP_USER_AGENT=CELULAR)
+        return Visita.objects.latest("id")
+
+    def entrar(self):
+        self.client.post("/painel/entrar/", {"usuario": "fabiano", "senha": "1234"})
+
+    def test_visita_de_quem_nao_entrou_conta_normalmente(self):
+        self.assertFalse(self.visitar().interno)
+
+    def test_entrar_no_painel_marca_o_aparelho(self):
+        self.entrar()
+        self.assertEqual(self.client.cookies[COOKIE_INTERNO].value, "1")
+
+    def test_visita_do_aparelho_marcado_nao_conta(self):
+        self.entrar()
+        self.assertTrue(self.visitar().interno)
+
+    def test_clique_do_aparelho_marcado_tambem_nao_conta(self):
+        self.entrar()
+        visita = self.visitar()
+        self.client.post(reverse("evento"), {"evento": "whatsapp_topo", "visita": visita.pk})
+        self.assertTrue(Clique.objects.get().interno)
+
+    def test_visita_marcada_fica_fora_do_relatorio(self):
+        from . import relatorio
+
+        self.entrar()
+        self.visitar()
+        self.visitar()
+        dados = relatorio.montar(30)
+        self.assertEqual(dados["resumo"]["visitas"], 0)
+        self.assertEqual(dados["resumo"]["internos"], 2)
+
+    def test_da_para_voltar_a_contar_o_aparelho(self):
+        self.entrar()
+        self.client.post(reverse("contagem"), {"acao": "contar"})
+        self.assertFalse(self.visitar().interno)
+
+    def test_marcar_de_novo_depois_de_ter_desligado(self):
+        self.entrar()
+        self.client.post(reverse("contagem"), {"acao": "contar"})
+        self.client.post(reverse("contagem"), {"acao": "ignorar"})
+        self.assertTrue(self.visitar().interno)
+
+    def test_visitante_qualquer_nao_consegue_mexer_na_contagem(self):
+        resposta = Client().post(reverse("contagem"), {"acao": "ignorar"})
+        self.assertEqual(resposta.status_code, 302)
+        self.assertIn("/painel/entrar/", resposta["Location"])

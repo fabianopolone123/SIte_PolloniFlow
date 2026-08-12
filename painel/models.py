@@ -63,6 +63,10 @@ class Visita(models.Model):
     # Robôs de busca e de pré-visualização de link entram no site o tempo todo.
     # São gravados, mas ficam fora das contas do painel.
     robo = models.BooleanField(default=False, db_index=True)
+    # Visita do próprio dono do site, reconhecida pelo aparelho. Também é
+    # gravada e também fica fora das contas: quem mexe no site o dia inteiro
+    # não pode aparecer no relatório como se fosse cliente.
+    interno = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         ordering = ("-criado_em",)
@@ -87,6 +91,7 @@ class Clique(models.Model):
         max_length=20, choices=Canal.choices, default=Canal.DIRETO, db_index=True
     )
     robo = models.BooleanField(default=False, db_index=True)
+    interno = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         ordering = ("-criado_em",)

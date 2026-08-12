@@ -563,6 +563,31 @@ td.numero {
     font-size: 13.5px;
 }
 
+.aviso-aparelho {
+    display: grid;
+    justify-items: start;
+    gap: 14px;
+}
+
+.aviso-aparelho p {
+    margin: 0;
+    max-width: 70ch;
+    color: var(--apagado);
+    font-size: 13.5px;
+}
+
+.aviso-aparelho p b {
+    color: var(--texto);
+}
+
+.aviso-aparelho .nota {
+    padding-top: 12px;
+    border-top: 1px solid var(--linha);
+    color: var(--fraco);
+    font-size: 12.5px;
+    width: 100%;
+}
+
 /* ---------- tela de entrada ---------- */
 
 .entrada {

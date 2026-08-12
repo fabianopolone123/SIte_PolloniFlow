@@ -74,6 +74,22 @@ Robôs de busca e de pré-visualização de link (o Facebook abre o link toda ve
 que alguém compartilha) são gravados com a marca `robo` e **ficam fora de todos
 os números** do painel.
 
+### As suas próprias visitas
+
+Quem cuida do site entra nele o tempo todo, e isso viraria movimento falso. Por
+isso **entrar no painel marca aquele aparelho**: dali em diante o que você abrir
+no site por ali é gravado com a marca `interno` e fica fora das contas, do mesmo
+jeito que os robôs.
+
+A marca é um cookie, então vale por aparelho e por navegador, e dura dois anos.
+Se você usa celular e computador, entre no painel pelos dois. No fim do painel,
+na seção "Suas próprias visitas", dá para desligar (útil se você entrou no
+computador de outra pessoa) e ligar de novo.
+
+É uma chave só, o cookie — estar logado não conta por si. Se contasse, quem
+clicasse em "voltar a contar" continuaria fora dos números até a sessão expirar,
+e o botão pareceria quebrado.
+
 ### O que é guardado
 
 Nada que identifique a pessoa. Cada visita guarda: data e hora, um número

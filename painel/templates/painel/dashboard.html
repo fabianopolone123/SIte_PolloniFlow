@@ -30,8 +30,9 @@
         </div>
         <p class="ajuda periodo">
             De {{ primeiro_dia|date:"d/m/Y" }} a {{ ultimo_dia|date:"d/m/Y" }}.
-            Robôs de busca e de pré-visualização de link ({{ resumo.robos }} no período)
-            ficam de fora de todos os números.
+            Ficam de fora de todos os números: robôs de busca e de pré-visualização de
+            link ({{ resumo.robos }} no período) e as suas próprias visitas
+            ({{ resumo.internos }}).
         </p>
     </section>
 
@@ -287,6 +288,39 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+    </section>
+
+    <section class="secao">
+        <h2>Suas próprias visitas</h2>
+        <div class="quadro aviso-aparelho">
+            {% if aparelho_marcado %}
+                <p>
+                    <b>Este aparelho está marcado como seu.</b> Tudo o que você abrir no
+                    site por aqui continua sendo gravado, mas fica fora dos números do
+                    painel — foram {{ resumo.internos }} visita{{ resumo.internos|pluralize }}
+                    assim no período.
+                </p>
+                <form method="post" action="{% url 'contagem' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="acao" value="contar">
+                    <button class="botao" type="submit">Voltar a contar este aparelho</button>
+                </form>
+            {% else %}
+                <p>
+                    <b>Este aparelho não está marcado.</b> O que você abrir no site por
+                    aqui entra nos números como se fosse a visita de um cliente.
+                </p>
+                <form method="post" action="{% url 'contagem' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="acao" value="ignorar">
+                    <button class="botao" type="submit">Não contar minhas visitas neste aparelho</button>
+                </form>
+            {% endif %}
+            <p class="nota">
+                A marca vale por aparelho e por navegador, e dura dois anos. Se você usa
+                o celular e o computador, entre no painel pelos dois — entrar já marca.
+            </p>
         </div>
     </section>
 

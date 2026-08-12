@@ -15,8 +15,12 @@ registro = logging.getLogger(__name__)
 
 COOKIE_VISITANTE = "pf_visitante"
 COOKIE_ORIGEM = "pf_origem"
+# Marca "este aparelho é do dono do site". Gravado ao entrar no painel e
+# desligável por lá; dura dois anos.
+COOKIE_INTERNO = "pf_interno"
 DIAS_VISITANTE = 365
 DIAS_ORIGEM = 90
+DIAS_INTERNO = 730
 
 # O domínio do próprio site: quando o referer é ele mesmo, não é "veio de fora".
 DOMINIO = "fabianopolone.com.br"
@@ -96,6 +100,17 @@ def _e_robo(agente):
     if not agente:
         return True
     return any(marca in agente for marca in ROBOS)
+
+
+def e_interno(request):
+    """A visita é do próprio dono do site?
+
+    Uma chave só, o cookie do aparelho: entrar no painel liga, e o botão no
+    painel desliga. Estar logado *não* conta por si — se contasse, quem
+    clicasse em "voltar a contar" continuaria fora dos números até a sessão
+    expirar, e o botão pareceria quebrado.
+    """
+    return request.COOKIES.get(COOKIE_INTERNO) == "1"
 
 
 def _endereco(request):
@@ -194,6 +209,7 @@ def registrar_visita(request):
             agente=agente,
             ip=_endereco(request),
             robo=_e_robo(agente),
+            interno=e_interno(request),
         )
     except Exception:
         registro.exception("Não foi possível registrar a visita")

@@ -107,8 +107,10 @@ def montar(dias):
     primeiro_dia = ultimo_dia - timedelta(days=dias - 1)
     inicio = timezone.make_aware(datetime.combine(primeiro_dia, time.min))
 
-    visitas = Visita.objects.filter(criado_em__gte=inicio, robo=False)
-    cliques = Clique.objects.filter(criado_em__gte=inicio, robo=False)
+    # Robôs e as visitas do próprio dono ficam de fora de tudo o que vem
+    # abaixo. Continuam gravados, só não entram na conta.
+    visitas = Visita.objects.filter(criado_em__gte=inicio, robo=False, interno=False)
+    cliques = Clique.objects.filter(criado_em__gte=inicio, robo=False, interno=False)
     cliques_whatsapp = cliques.filter(evento__in=EVENTOS_WHATSAPP)
 
     totais = _totais(visitas)
@@ -122,6 +124,9 @@ def montar(dias):
         "cliques": total_cliques,
         "taxa": _porcentagem(total_cliques, totais["visitas"]),
         "robos": Visita.objects.filter(criado_em__gte=inicio, robo=True).count(),
+        "internos": Visita.objects.filter(
+            criado_em__gte=inicio, robo=False, interno=True
+        ).count(),
     }
 
     comparativo = {
