@@ -148,8 +148,12 @@ a {
         linear-gradient(180deg, rgba(6, 17, 31, 0.1), var(--bg));
 }
 
+/* Coluna flexível para que a ordem dos blocos possa mudar no celular sem
+ * duplicar o texto no HTML — ver a regra de `order` no bloco de 560px. */
 .hero-content {
     width: min(690px, 100%);
+    display: flex;
+    flex-direction: column;
 }
 
 .eyebrow {
@@ -397,8 +401,8 @@ h2 {
 .quem-responde picture,
 .quem-responde img {
     flex: none;
-    width: 56px;
-    height: 56px;
+    width: 76px;
+    height: 76px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -682,42 +686,126 @@ h2 {
         padding-inline: 12px;
     }
 
-    /* No celular o botão flutuante fica mais discreto, para não tapar o texto
-     * enquanto a pessoa lê. */
+    /* A pílula com texto atravessava a tela e ficava por cima do conteúdo em
+     * toda rolagem. No celular vira um círculo só com o ícone: o símbolo do
+     * WhatsApp já diz o que faz, e o texto do botão sobra — a página inteira
+     * está falando de orçamento. */
     .whatsapp-flutuante {
-        min-height: 52px;
-        padding: 0 18px 0 14px;
-        font-size: 0.92rem;
+        width: 58px;
+        height: 58px;
+        min-height: 0;
+        padding: 0;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .whatsapp-flutuante span {
+        display: none;
+    }
+
+    .whatsapp-flutuante svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    /* O círculo tem 58px e fica a 16px da borda: o rodapé precisa desse espaço
+     * livre embaixo, senão a última linha passa por trás do botão. */
+    .site-footer {
+        padding-bottom: 88px;
+    }
+
+    /* A foto ficava em 56px, espremida numa coluna com o texto enrolando ao
+     * lado em seis linhas estreitas. Empilhado ela respira e aparece. */
+    .quem-responde {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        margin-top: 20px;
+        padding-top: 20px;
+    }
+
+    .quem-responde picture,
+    .quem-responde img {
+        width: 104px;
+        height: 104px;
+    }
+
+    .quem-responde p {
+        font-size: 0.94rem;
     }
 
     h1 {
-        font-size: clamp(2.05rem, 8.6vw, 2.7rem);
+        font-size: clamp(1.95rem, 8.2vw, 2.5rem);
+        margin-bottom: 10px;
     }
 
-    /* No celular tudo no topo disputa espaço com o botão. O que não ajuda a
-     * decidir sai de cena, e o botão principal ocupa a largura toda — alvo
-     * maior para o dedo e impossível de não ver. */
+    /* Os títulos de seção eram dimensionados para tela larga: no celular a
+     * mesma frase virava quatro linhas de letra gigante. */
+    h2 {
+        font-size: clamp(1.5rem, 6.2vw, 1.95rem);
+        line-height: 1.14;
+    }
+
+    /* ---- o topo, que é o que 90% do público vê ao chegar do anúncio ----
+     *
+     * O botão estava atrás de um muro: subtítulo, pergunta e seis linhas de
+     * parágrafo. Aqui ele sobe para logo abaixo do título, e a explicação
+     * desce para quem quiser ler antes de decidir. É só ordem visual — a
+     * ordem do HTML continua a que faz sentido para leitor de tela. */
+    .hero-content > .eyebrow { order: 1; }
+    .hero-content > h1 { order: 2; }
+    .hero-content > .slogan { order: 3; }
+    .hero-content > .hero-actions { order: 4; }
+    .hero-content > .hero-reforco { order: 5; }
+    .hero-content > .hero-copy { order: 6; }
+
     .hero {
-        padding-top: 96px;
-        padding-bottom: 56px;
+        min-height: 0;
+        padding-top: 88px;
+        padding-bottom: 44px;
+    }
+
+    .eyebrow {
+        margin-bottom: 10px;
+        font-size: 0.68rem;
+        letter-spacing: 0.04em;
+    }
+
+    /* A pergunta era quase tão alta quanto o título e os dois brigavam. */
+    .slogan {
+        margin-bottom: 0;
+        font-size: 1.06rem;
+        line-height: 1.4;
     }
 
     .hero-copy {
-        font-size: 1rem;
-        line-height: 1.6;
+        margin: 18px 0 0;
+        font-size: 0.95rem;
+        line-height: 1.55;
     }
 
     .hero-actions {
-        margin-top: 24px;
+        margin-top: 18px;
     }
 
     .hero-actions .btn {
         width: 100%;
     }
 
+    /* O secundário não pode ter o mesmo peso do botão que leva à conversa. */
+    .hero-actions .btn.secondary {
+        min-height: 42px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--muted);
+        border-color: transparent;
+        background: none;
+    }
+
     .hero-reforco {
-        gap: 6px 14px;
-        font-size: 0.85rem;
+        gap: 4px 14px;
+        margin-top: 12px;
+        font-size: 0.82rem;
     }
 
     .signal-row {
@@ -731,14 +819,45 @@ h2 {
         width: min(100% - 24px, 1120px);
     }
 
+    /* A página tinha 6,1 telas de rolagem para pouco conteúdo: quase tudo era
+     * espaço vazio dimensionado para monitor. */
     .section {
-        padding: 68px 0;
+        padding: 46px 0;
+    }
+
+    .section-heading {
+        margin-bottom: 22px;
     }
 
     .metric,
     .flow-section,
     .cta-section {
-        padding: 24px;
+        padding: 22px;
+    }
+
+    .metric {
+        min-height: 0;
+    }
+
+    .metric strong {
+        margin-bottom: 6px;
+    }
+
+    .solution-card {
+        min-height: 0;
+        padding: 20px;
+    }
+
+    .card-icon {
+        margin-bottom: 14px;
+    }
+
+    .solution-card p,
+    .flow-copy p,
+    .process-item p,
+    .cta-section p {
+        font-size: 0.95rem;
+        line-height: 1.55;
     }
 
     .automation-panel {
