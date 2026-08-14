@@ -63,6 +63,82 @@
     </section>
 
     <section class="secao">
+        <h2>Quanto leram e quanto tempo ficaram</h2>
+        <p class="ajuda">
+            É o que o clique sozinho não conta. O navegador avisa, quando a pessoa sai da
+            página, até onde ela rolou e quanto tempo ficou com o site à vista — tempo de
+            aba no fundo não entra. Serve para separar duas coisas muito diferentes:
+            <b>quem foi embora antes de ler</b> e <b>quem leu a página inteira e mesmo
+            assim não chamou</b>. A primeira é problema de anúncio ou de topo de página; a
+            segunda é problema de oferta.
+        </p>
+
+        {% if engajamento.medidas %}
+        <div class="cartoes">
+            <div class="cartao">
+                <p class="titulo">Rolaram até o fim</p>
+                <span class="numero">{{ engajamento.ate_o_fim|floatformat:1 }}%</span>
+                <p class="nota">viram 90% ou mais da página</p>
+            </div>
+            <div class="cartao">
+                <p class="titulo">Viram só a primeira tela</p>
+                <span class="numero">{{ engajamento.so_o_topo|floatformat:1 }}%</span>
+                <p class="nota">saíram sem passar de um quarto da página</p>
+            </div>
+            <div class="cartao">
+                <p class="titulo">Tempo típico</p>
+                <span class="numero">{{ engajamento.tempo_mediano_texto }}</span>
+                <p class="nota">metade ficou mais que isso, metade menos (média: {{ engajamento.tempo_medio_texto }})</p>
+            </div>
+            <div class="cartao">
+                <p class="titulo">Saíram na hora</p>
+                <span class="numero">{{ engajamento.saida_rapida|floatformat:1 }}%</span>
+                <p class="nota">ficaram menos de 10 segundos</p>
+            </div>
+        </div>
+
+        <div class="duas-colunas">
+            <div class="quadro eventos">
+                <p class="subtitulo">Até onde rolaram</p>
+                {% for linha in engajamento.faixas_rolagem %}
+                <div class="evento">
+                    <span class="nome">{{ linha.rotulo }}</span>
+                    <span class="valor">{{ linha.fatia|floatformat:1 }}% <small>({{ linha.total }})</small></span>
+                    <span class="trilho"><i class="preenchimento leitura" style="width:{{ linha.fatia|unlocalize }}%"></i></span>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="quadro eventos">
+                <p class="subtitulo">Quanto tempo ficaram</p>
+                {% for linha in engajamento.faixas_tempo %}
+                <div class="evento">
+                    <span class="nome">{{ linha.rotulo }}</span>
+                    <span class="valor">{{ linha.fatia|floatformat:1 }}% <small>({{ linha.total }})</small></span>
+                    <span class="trilho"><i class="preenchimento tempo" style="width:{{ linha.fatia|unlocalize }}%"></i></span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <p class="ajuda cobertura">
+            Estes números saem de {{ engajamento.medidas }} de
+            {{ engajamento.total }} visita{{ engajamento.total|pluralize }} do período
+            ({{ engajamento.cobertura|floatformat:1 }}%). Ficam de fora as visitas que
+            fecharam a página antes do site terminar de carregar e as que aconteceram
+            antes desta medição existir — contá-las como “zero segundo” inventaria
+            abandono que ninguém viu.
+        </p>
+        {% else %}
+        <div class="quadro">
+            <p class="vazio-aviso">
+                Nenhuma visita medida neste período ainda. A medição começa a valer nas
+                visitas novas, depois de publicar esta versão do site.
+            </p>
+        </div>
+        {% endif %}
+    </section>
+
+    <section class="secao">
         <h2>Anúncio ou orgânico</h2>
         <p class="ajuda">
             <b>Anúncio</b> é quem chegou por um link de campanha paga — o endereço vem com
@@ -82,6 +158,10 @@
                     <span><b>{{ comparativo.anuncio.pessoas }}</b> pessoas</span>
                     <span><b>{{ comparativo.anuncio.cliques }}</b> cliques no WhatsApp</span>
                     <span><b>{{ comparativo.anuncio.taxa|floatformat:1 }}%</b> de conversão</span>
+                    {% if comparativo.anuncio.medidas %}
+                    <span><b>{{ comparativo.anuncio.ate_o_fim|floatformat:1 }}%</b> leram até o fim</span>
+                    <span><b>{{ comparativo.anuncio.tempo_mediano_texto }}</b> de permanência típica</span>
+                    {% endif %}
                 </div>
             </div>
             <div class="cartao organico">
@@ -95,6 +175,10 @@
                     <span><b>{{ comparativo.organico.pessoas }}</b> pessoas</span>
                     <span><b>{{ comparativo.organico.cliques }}</b> cliques no WhatsApp</span>
                     <span><b>{{ comparativo.organico.taxa|floatformat:1 }}%</b> de conversão</span>
+                    {% if comparativo.organico.medidas %}
+                    <span><b>{{ comparativo.organico.ate_o_fim|floatformat:1 }}%</b> leram até o fim</span>
+                    <span><b>{{ comparativo.organico.tempo_mediano_texto }}</b> de permanência típica</span>
+                    {% endif %}
                 </div>
             </div>
         </div>

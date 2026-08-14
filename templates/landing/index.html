@@ -5,29 +5,56 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Polloni Flow | Automação e software para negócios mais ágeis</title>
-    <meta name="description" content="Polloni Flow cria automações, softwares e integrações para empresas que precisam ganhar velocidade operacional.">
+    <meta name="description" content="Automatizo o trabalho manual que trava a sua equipe: sistemas, integrações e painéis sob medida. Peça um orçamento sem compromisso pelo WhatsApp.">
+    <link rel="canonical" href="https://fabianopolone.com.br/">
     <link rel="icon" href="{% static 'landing/img/favicon.svg' %}" type="image/svg+xml">
     <link rel="alternate icon" href="{% static 'landing/img/favicon.ico' %}" sizes="48x48 32x32 16x16">
     <link rel="apple-touch-icon" href="{% static 'landing/img/apple-touch-icon.png' %}">
+
+    {% comment %}
+    Sem estas linhas, o link compartilhado no WhatsApp e no Instagram aparece
+    como texto seco, sem imagem nem título — justamente onde está o público.
+    {% endcomment %}
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="Polloni Flow">
+    <meta property="og:title" content="Menos trabalho manual. Mais tempo para vender.">
+    <meta property="og:description" content="Sistemas, integrações e automações sob medida para tirar da mão da sua equipe o que o computador pode fazer sozinho. Orçamento sem compromisso.">
+    <meta property="og:url" content="https://fabianopolone.com.br/">
+    <meta property="og:image" content="https://fabianopolone.com.br{% static 'landing/img/hero-automation-1200.jpg' %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="640">
+    <meta name="twitter:card" content="summary_large_image">
+
+    {% comment %}
+    A imagem do topo é o maior elemento da página: pré-carregar o mesmo arquivo
+    que o <picture> vai escolher evita que ela só comece a baixar depois do CSS.
+    {% endcomment %}
+    <link rel="preload" as="image" href="{% static 'landing/img/hero-automation-1200.webp' %}"
+          imagesrcset="{% static 'landing/img/hero-automation-800.webp' %} 800w, {% static 'landing/img/hero-automation-1200.webp' %} 1200w, {% static 'landing/img/hero-automation-1717.webp' %} 1717w"
+          imagesizes="100vw" fetchpriority="high">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'landing/css/styles.css' %}">
 </head>
-<body data-visita="{{ visita.id|default_if_none:'' }}" data-evento-url="{% url 'evento' %}">
+<body data-visita="{{ visita.id|default_if_none:'' }}"
+      data-evento-url="{% url 'evento' %}"
+      data-medida-url="{% url 'medida' %}">
     <canvas class="network-canvas" id="networkCanvas" aria-hidden="true"></canvas>
 
     <header class="site-header" data-reveal>
         <a class="brand" href="#top" aria-label="Polloni Flow">
             <span class="brand-mark">PF</span>
-            <span>Polloni Flow</span>
+            <span class="brand-texto">Polloni Flow</span>
         </a>
         <nav class="nav-links" aria-label="Navegação principal">
             <a href="#solucoes" data-evento="menu_solucoes">Soluções</a>
             <a href="#processo" data-evento="menu_processo">Processo</a>
             <a href="#contato" data-evento="menu_contato">Contato</a>
         </nav>
-        <a class="header-action" href="https://wa.me/5514988208134?text=Ol%C3%A1%2C%20quero%20automatizar%20processos%20com%20a%20Polloni%20Flow" target="_blank" rel="noreferrer" data-evento="whatsapp_topo">
+        <a class="header-action" href="https://wa.me/5514988208134?text=Ol%C3%A1%21%20Vi%20o%20site%20da%20Polloni%20Flow%20e%20queria%20um%20or%C3%A7amento%20sem%20compromisso.%20Meu%20caso%20%C3%A9%3A%20" target="_blank" rel="noreferrer" data-evento="whatsapp_topo">
             Falar agora
         </a>
     </header>
@@ -35,22 +62,37 @@
     <main id="top">
         <section class="hero">
             <div class="hero-media" aria-hidden="true">
-                <img src="{% static 'landing/img/hero-automation.png' %}" alt="">
+                <picture>
+                    <source type="image/webp"
+                            srcset="{% static 'landing/img/hero-automation-800.webp' %} 800w,
+                                    {% static 'landing/img/hero-automation-1200.webp' %} 1200w,
+                                    {% static 'landing/img/hero-automation-1717.webp' %} 1717w"
+                            sizes="100vw">
+                    <img src="{% static 'landing/img/hero-automation-1200.jpg' %}" alt=""
+                         width="1717" height="916" fetchpriority="high" decoding="async">
+                </picture>
             </div>
             <div class="hero-overlay"></div>
             <div class="hero-content" data-reveal>
-                <p class="eyebrow">Software, automação e integrações</p>
-                <h1>Polloni Flow</h1>
-                <p class="slogan">Automação e software para negócios mais ágeis.</p>
+                <p class="eyebrow">Polloni Flow · Automação e software sob medida</p>
+                <h1>Menos trabalho manual. Mais tempo para vender.</h1>
+                <p class="slogan">A sua equipe ainda digita à mão o que o sistema podia fazer sozinho?</p>
                 <p class="hero-copy">
-                    Transforme processos manuais em fluxos digitais conectados. Criamos sistemas,
-                    painéis, integrações e automações sob medida para reduzir retrabalho, acelerar
-                    equipes e dar mais controle ao seu negócio.
+                    Planilha que alguém preenche duas vezes, pedido que só anda depois do WhatsApp,
+                    relatório que toma a manhã inteira. Eu transformo esses gargalos em fluxos
+                    automáticos — e devolvo as horas para a sua equipe.
                 </p>
                 <div class="hero-actions">
-                    <a class="btn primary" href="#contato" data-evento="diagnostico">Solicitar diagnóstico</a>
-                    <a class="btn secondary" href="#solucoes" data-evento="ver_solucoes">Ver soluções</a>
+                    <a class="btn primary" href="https://wa.me/5514988208134?text=Ol%C3%A1%21%20Vi%20o%20site%20da%20Polloni%20Flow%20e%20queria%20um%20or%C3%A7amento%20sem%20compromisso.%20O%20que%20mais%20toma%20tempo%20da%20minha%20equipe%20hoje%20%C3%A9%3A%20" target="_blank" rel="noreferrer" data-evento="diagnostico">
+                        Pedir orçamento sem compromisso
+                    </a>
+                    <a class="btn secondary" href="#solucoes" data-evento="ver_solucoes">Ver o que fazemos</a>
                 </div>
+                <p class="hero-reforco">
+                    <span>Conversa direta comigo, sem robô</span>
+                    <span>Você não paga nada para perguntar</span>
+                    <span>Resposta no mesmo dia</span>
+                </p>
                 <div class="signal-row" aria-label="Áreas atendidas">
                     <span>APIs</span>
                     <span>Dashboards</span>
@@ -61,18 +103,25 @@
             </div>
         </section>
 
-        <section class="metrics section-band" aria-label="Indicadores">
+        {% comment %}
+        Aqui havia três números — 24/7, -80% e +1 — que não saíam de medição
+        nenhuma. Número sem origem é o tipo de coisa que faz o visitante duvidar
+        do resto da página, ainda mais numa empresa que ele não conhece. No lugar
+        entraram compromissos que dependem só de como o trabalho é feito, e que
+        portanto dá para cumprir sempre.
+        {% endcomment %}
+        <section class="metrics section-band" aria-label="Como eu trabalho">
             <div class="metric" data-reveal>
-                <strong>24/7</strong>
-                <span>rotinas automáticas trabalhando</span>
+                <strong>Sob medida</strong>
+                <span>nada de sistema de prateleira empurrado para o seu caso</span>
             </div>
             <div class="metric" data-reveal>
-                <strong>-80%</strong>
-                <span>menos tarefas repetitivas</span>
+                <strong>Você aprova antes</strong>
+                <span>desenho o protótipo primeiro e só construo depois do seu sim</span>
             </div>
             <div class="metric" data-reveal>
-                <strong>+1</strong>
-                <span>operação conectada em um só fluxo</span>
+                <strong>Perguntar é de graça</strong>
+                <span>a conversa e o orçamento não custam nada, mesmo que não dê negócio</span>
             </div>
         </section>
 
@@ -95,7 +144,7 @@
                 <article class="solution-card" data-reveal>
                     <span class="card-icon">03</span>
                     <h3>Integração entre plataformas</h3>
-                    <p>Conectamos CRM, ERP, WhatsApp, e-mail, bancos de dados e APIs para que a informação flua sem retrabalho.</p>
+                    <p>Conecto CRM, ERP, WhatsApp, e-mail, bancos de dados e APIs para que a informação flua sem retrabalho.</p>
                 </article>
                 <article class="solution-card" data-reveal>
                     <span class="card-icon">04</span>
@@ -110,7 +159,7 @@
                 <p class="eyebrow">Fluxo operacional</p>
                 <h2>Da tarefa manual ao processo inteligente.</h2>
                 <p>
-                    Mapeamos a rotina, encontramos gargalos e criamos um caminho digital para cada etapa.
+                    Eu mapeio a rotina, encontro os gargalos e crio um caminho digital para cada etapa.
                     O resultado é uma operação mais previsível, integrada e pronta para crescer.
                 </p>
             </div>
@@ -132,20 +181,20 @@
             </div>
             <div class="process-list">
                 <div class="process-item" data-reveal>
-                    <span>Diagnóstico</span>
-                    <p>Entendemos o fluxo atual, as perdas de tempo e o que precisa ser medido.</p>
+                    <span>Conversa</span>
+                    <p>Você conta o que está tomando tempo. Sem compromisso e sem custo nenhum.</p>
                 </div>
                 <div class="process-item" data-reveal>
                     <span>Protótipo</span>
-                    <p>Definimos telas, integrações e prioridades para validar antes de construir tudo.</p>
+                    <p>Defino telas, integrações e prioridades para você validar antes de eu construir tudo.</p>
                 </div>
                 <div class="process-item" data-reveal>
                     <span>Implementação</span>
-                    <p>Desenvolvemos, testamos e conectamos a solução aos sistemas que você já usa.</p>
+                    <p>Desenvolvo, testo e conecto a solução aos sistemas que você já usa.</p>
                 </div>
                 <div class="process-item" data-reveal>
                     <span>Evolução</span>
-                    <p>Acompanhamos melhorias para que o sistema continue acompanhando o crescimento.</p>
+                    <p>Acompanho as melhorias para que o sistema cresça junto com a empresa.</p>
                 </div>
             </div>
         </section>
@@ -153,11 +202,39 @@
         <section class="cta-section" id="contato" data-reveal>
             <div>
                 <p class="eyebrow">Vamos automatizar?</p>
-                <h2>Conte qual processo está tomando tempo da sua equipe.</h2>
-                <p>A Polloni Flow transforma esse gargalo em um fluxo digital mais rápido, rastreável e escalável.</p>
+                <h2>Me conta qual processo está tomando o tempo da sua equipe.</h2>
+                <p>
+                    Responda numa mensagem só: o que é feito à mão hoje. Eu te digo se dá para
+                    automatizar, como seria e quanto custa — sem compromisso nenhum de contratar.
+                </p>
+
+                {% comment %}
+                Quem chega de um anúncio não conhece a empresa, e "nós" numa empresa
+                que ele não localiza soa a agência genérica. Uma pessoa com nome e
+                rosto é mais fácil de confiar do que um plural sem cara.
+
+                A imagem de 224px existe para tela retina, onde a de 112 sairia
+                borrada. Para mostrar a foto maior, basta mudar a medida no CSS
+                (.quem-responde) — a de 224 aguenta até 112px sem perder nitidez.
+                {% endcomment %}
+                <div class="quem-responde">
+                    <picture>
+                        <source type="image/webp"
+                                srcset="{% static 'landing/img/fabiano-112.webp' %} 1x,
+                                        {% static 'landing/img/fabiano-224.webp' %} 2x">
+                        <img src="{% static 'landing/img/fabiano-112.jpg' %}"
+                             alt="Fabiano Polone" width="56" height="56"
+                             loading="lazy" decoding="async">
+                    </picture>
+                    <p>
+                        <b>Quem responde sou eu, Fabiano.</b>
+                        Não tem atendente nem robô no meio do caminho: a sua mensagem cai
+                        direto no meu WhatsApp, e quem lê e responde sou eu.
+                    </p>
+                </div>
             </div>
-            <a class="btn primary large" href="https://wa.me/5514988208134?text=Ol%C3%A1%2C%20quero%20um%20diagn%C3%B3stico%20para%20automa%C3%A7%C3%A3o%20e%20software" target="_blank" rel="noreferrer" data-evento="whatsapp_final">
-                Chamar no WhatsApp
+            <a class="btn primary large" href="https://wa.me/5514988208134?text=Ol%C3%A1%21%20Vi%20o%20site%20da%20Polloni%20Flow%20e%20queria%20um%20or%C3%A7amento%20sem%20compromisso.%20O%20processo%20que%20quero%20automatizar%20%C3%A9%3A%20" target="_blank" rel="noreferrer" data-evento="whatsapp_final">
+                Pedir meu orçamento
             </a>
         </section>
     </main>
@@ -166,6 +243,20 @@
         <span>Polloni Flow</span>
         <span>Automação e software para negócios mais ágeis.</span>
     </footer>
+
+    {% comment %}
+    O atalho para a conversa que acompanha a pessoa em qualquer altura da página.
+    É um link comum: aparece mesmo se o JavaScript não rodar.
+    {% endcomment %}
+    <a class="whatsapp-flutuante"
+       href="https://wa.me/5514988208134?text=Ol%C3%A1%21%20Vi%20o%20site%20da%20Polloni%20Flow%20e%20queria%20um%20or%C3%A7amento%20sem%20compromisso.%20Meu%20caso%20%C3%A9%3A%20"
+       target="_blank" rel="noreferrer" data-evento="whatsapp_flutuante"
+       aria-label="Pedir orçamento sem compromisso pelo WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+        </svg>
+        <span>Pedir orçamento</span>
+    </a>
 
     <script src="{% static 'landing/js/main.js' %}"></script>
 </body>

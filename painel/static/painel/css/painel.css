@@ -483,6 +483,41 @@ code {
     font-weight: 700;
 }
 
+/* ---------- leitura da página: rolagem e permanência ---------- */
+
+/* As duas distribuições lado a lado, uma embaixo da outra quando não couber. */
+.duas-colunas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.duas-colunas .subtitulo {
+    margin: 0 0 4px;
+    color: var(--apagado);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Cores distintas das do gráfico de canais: aqui o dado é outro, e repetir o
+ * laranja do anúncio faria parecer que a barra fala de campanha paga. */
+.evento .preenchimento.leitura {
+    background: var(--marca);
+}
+
+.evento .preenchimento.tempo {
+    background: #8d7ae6;
+}
+
+.secao > .ajuda.cobertura {
+    margin-top: 14px;
+    color: var(--fraco);
+    font-size: 12.5px;
+}
+
 .evento .valor small {
     color: var(--fraco);
     font-size: 11.5px;

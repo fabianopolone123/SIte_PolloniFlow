@@ -2,6 +2,8 @@ from datetime import timedelta
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Value
+from django.db.models.functions import Greatest
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -11,6 +13,11 @@ from django.views.decorators.http import require_POST
 from . import relatorio
 from .coleta import COOKIE_INTERNO, COOKIE_VISITANTE, DIAS_INTERNO, aplicar_cookies
 from .models import EVENTOS, Clique, Visita
+
+# Teto do tempo de permanência, em segundos. O navegador só conta o tempo com a
+# página à vista, mas uma aba deixada aberta no primeiro plano a tarde inteira
+# ainda somaria horas e sozinha estragaria a média.
+LIMITE_SEGUNDOS = 30 * 60
 
 
 def _marcar_aparelho(resposta, request):
@@ -67,6 +74,31 @@ def painel(request):
     return resposta
 
 
+def _visitas_desta_pessoa(request):
+    """As visitas que o pedido pode mexer: a informada, se for mesmo dela.
+
+    Devolve um queryset (vazio quando não confere) em vez do objeto, para que
+    quem atualiza possa fazê-lo numa consulta só, sem corrida entre dois avisos
+    que cheguem juntos.
+    """
+    visitante = request.COOKIES.get(COOKIE_VISITANTE, "")
+    identificador = request.POST.get("visita", "")
+    if not visitante or not identificador.isdigit() or len(identificador) > 18:
+        return Visita.objects.none()
+    return Visita.objects.filter(
+        pk=int(identificador),
+        visitante=visitante,
+        criado_em__gte=timezone.now() - timedelta(days=1),
+    )
+
+
+def _inteiro(valor, teto):
+    try:
+        return max(0, min(int(float(valor)), teto))
+    except (TypeError, ValueError):
+        return 0
+
+
 @csrf_exempt
 @require_POST
 def evento(request):
@@ -81,17 +113,8 @@ def evento(request):
     if codigo not in EVENTOS:
         return HttpResponse(status=204)
 
-    visitante = request.COOKIES.get(COOKIE_VISITANTE, "")
-    identificador = request.POST.get("visita", "")
-    if not visitante or not identificador.isdigit():
-        return HttpResponse(status=204)
-
     try:
-        visita = Visita.objects.filter(
-            pk=int(identificador),
-            visitante=visitante,
-            criado_em__gte=timezone.now() - timedelta(days=1),
-        ).first()
+        visita = _visitas_desta_pessoa(request).first()
         if visita is not None:
             Clique.objects.create(
                 visita=visita,
@@ -100,6 +123,34 @@ def evento(request):
                 robo=visita.robo,
                 interno=visita.interno,
             )
+    except Exception:
+        pass
+
+    return HttpResponse(status=204)
+
+
+@csrf_exempt
+@require_POST
+def medida(request):
+    """Recebe quanto da página a pessoa viu e quanto tempo ficou.
+
+    Chega por `sendBeacon` quando a pessoa sai da página — e pode chegar mais de
+    uma vez, porque quem volta para a aba e sai de novo manda outro aviso. Por
+    isso o valor é guardado com `Greatest`: fica sempre o maior já visto, e dois
+    avisos simultâneos não desfazem um ao outro.
+
+    As mesmas defesas do `/evento/`: só mexe na visita se ela for mesmo desta
+    pessoa e for de hoje.
+    """
+    rolagem = _inteiro(request.POST.get("rolagem"), 100)
+    segundos = _inteiro(request.POST.get("segundos"), LIMITE_SEGUNDOS)
+
+    try:
+        _visitas_desta_pessoa(request).update(
+            medido=True,
+            rolagem=Greatest("rolagem", Value(rolagem)),
+            segundos=Greatest("segundos", Value(segundos)),
+        )
     except Exception:
         pass
 

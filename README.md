@@ -46,6 +46,7 @@ Entre em `/painel/entrar/`. O acesso inicial é **usuário `fabiano`, senha
 | Bloco | Pergunta |
 | --- | --- |
 | Resumo | Quantas visitas, quantas pessoas, quantos cliques para o WhatsApp e qual a taxa de conversão |
+| Quanto leram e quanto tempo ficaram | Quem foi embora antes de ler e quem leu tudo e mesmo assim não chamou |
 | Anúncio ou orgânico | Quanto do movimento veio de campanha paga e quanto veio sozinho — e qual dos dois converte melhor |
 | Visitas por dia | O movimento ao longo do período, já separado entre anúncio e orgânico |
 | De onde vieram | Anúncio, busca, redes sociais, outros sites, direto |
@@ -53,6 +54,38 @@ Entre em `/painel/entrar/`. O acesso inicial é **usuário `fabiano`, senha
 | Cliques nos botões | Quantas vezes cada botão da página foi clicado |
 | Aparelhos | Celular, computador, tablet |
 | Últimas visitas | As 25 mais recentes, uma a uma |
+
+### Quanto leram e quanto tempo ficaram
+
+A taxa de conversão sozinha diz que ninguém chamou, mas não diz por quê. Estas
+duas medidas separam os dois motivos, que pedem correções opostas:
+
+- **saiu antes de ler** (rolou pouco, ficou poucos segundos) → o problema está
+  no anúncio ou no topo da página;
+- **leu tudo e não chamou** → o problema está na oferta.
+
+O navegador manda os dois números quando a pessoa sai da página, por
+`sendBeacon`, para o endereço `/medida/`:
+
+- **rolagem**: quanto da página ela chegou a ver, de 0 a 100. A partir de 90
+  conta como "até o fim" — os últimos por cento são rodapé.
+- **segundos**: tempo com a página *à vista*. Aba no fundo e celular no bolso
+  não contam. O teto é de 30 minutos, para que uma aba esquecida aberta não
+  estrague sozinha a média.
+
+O aviso pode chegar mais de uma vez (quem volta para a aba e sai de novo manda
+outro), então vale sempre o maior valor já registrado.
+
+O painel mostra a **mediana** como "tempo típico", não a média: uma única aba
+esquecida aberta levanta a média e não mexe na mediana.
+
+#### Cobertura
+
+Cada visita nasce com a marca `medido` desligada e só a recebe quando o primeiro
+aviso chega. Isso separa "ficou zero segundo" de "não deu tempo de medir" — quem
+fechou a página antes do JavaScript rodar, e todas as visitas gravadas antes
+desta medição existir, ficam **fora** das médias em vez de entrarem como
+abandono imediato. O painel mostra de quantas visitas o número saiu.
 
 ### Como a origem é decidida
 
@@ -92,10 +125,14 @@ e o botão pareceria quebrado.
 
 ### O que é guardado
 
-Nada que identifique a pessoa. Cada visita guarda: data e hora, um número
-aleatório de visitante (cookie, só para separar "visitas" de "pessoas"), a
-origem, o aparelho, o navegador e o endereço IP. Sem nome, sem e-mail, sem
-rastreador de terceiros — nenhum dado sai do servidor.
+Cada visita guarda: data e hora, um número aleatório de visitante (cookie, só
+para separar "visitas" de "pessoas"), a origem, o aparelho, o navegador, o
+endereço IP, quanto da página foi vista e por quantos segundos. Sem nome, sem
+e-mail, sem rastreador de terceiros — nenhum dado sai do servidor.
+
+O IP é o único campo que a LGPD trata como dado pessoal. Ele não é usado em
+nenhum número do painel; está ali para investigar abuso. Se não fizer falta,
+apagá-lo do `models.py` deixa a base inteiramente anônima.
 
 ### Cliques
 
@@ -107,6 +144,36 @@ servidor quando são clicados. Para acrescentar um botão novo ao relatório:
 
 Só códigos que estão nessa lista são aceitos — o endereço `/evento/` ignora
 qualquer outra coisa.
+
+Os códigos em `EVENTOS_WHATSAPP` são os que contam como conversão: hoje o botão
+flutuante, o do topo e o do fim da página.
+
+### A imagem do topo
+
+O hero é servido em WebP por `<picture>`, em três larguras, com um JPEG de
+reserva para navegador sem suporte. O original (`hero-automation.png`, 1,4 MB)
+não é mais usado pela página — ficou no repositório só como fonte. Para gerar as
+versões de novo depois de trocar a arte:
+
+```powershell
+.venv\Scripts\pip install Pillow
+.venv\Scripts\python - <<'FIM'
+from PIL import Image
+from pathlib import Path
+pasta = Path("static/landing/img")
+im = Image.open(pasta / "hero-automation.png").convert("RGB")
+for largura in (800, 1200, 1717):
+    altura = round(im.height * largura / im.width)
+    copia = im.resize((largura, altura), Image.LANCZOS)
+    copia.save(pasta / f"hero-automation-{largura}.webp", "WEBP", quality=72, method=6)
+altura = round(im.height * 1200 / im.width)
+im.resize((1200, altura), Image.LANCZOS).save(
+    pasta / "hero-automation-1200.jpg", "JPEG", quality=78, optimize=True, progressive=True)
+FIM
+```
+
+O Pillow é ferramenta de edição de imagem, usada só nessa hora — por isso **não**
+está no `requirements.txt`.
 
 ---
 

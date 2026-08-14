@@ -21,6 +21,7 @@ class Dispositivo(models.TextChoices):
 # cliques — assim ninguém consegue inventar evento novo mandando requisição na
 # mão. A ordem aqui é a ordem em que aparecem no relatório.
 EVENTOS = {
+    "whatsapp_flutuante": "Botão flutuante do WhatsApp",
     "whatsapp_topo": "Falar agora (botão do topo)",
     "whatsapp_final": "Chamar no WhatsApp (final da página)",
     "diagnostico": "Solicitar diagnóstico",
@@ -30,9 +31,9 @@ EVENTOS = {
     "menu_contato": "Menu: Contato",
 }
 
-# Os dois botões que levam para a conversa no WhatsApp. São eles que contam
-# como "pessoa que chamou".
-EVENTOS_WHATSAPP = ("whatsapp_topo", "whatsapp_final")
+# Os botões que levam para a conversa no WhatsApp. São eles que contam como
+# "pessoa que chamou".
+EVENTOS_WHATSAPP = ("whatsapp_flutuante", "whatsapp_topo", "whatsapp_final")
 
 
 class Visita(models.Model):
@@ -67,6 +68,20 @@ class Visita(models.Model):
     # gravada e também fica fora das contas: quem mexe no site o dia inteiro
     # não pode aparecer no relatório como se fosse cliente.
     interno = models.BooleanField(default=False, db_index=True)
+
+    # Engajamento, contado pelo navegador e enviado quando a pessoa sai da
+    # página. Diz o que o clique sozinho não diz: quem leu a página inteira e
+    # mesmo assim não chamou, e quem foi embora antes de ver qualquer coisa.
+    #
+    # `medido` separa "ficou 0 segundo" de "o navegador não chegou a contar" —
+    # visitas gravadas antes desta medição existir, ou de quem saiu antes do
+    # JavaScript rodar. Sem essa marca, toda visita antiga entraria nas médias
+    # como se fosse um abandono imediato.
+    medido = models.BooleanField(default=False, db_index=True)
+    # Quanto da página a pessoa chegou a ver, de 0 a 100.
+    rolagem = models.PositiveSmallIntegerField(default=0)
+    # Segundos com a página à vista. Tempo de aba escondida não conta.
+    segundos = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ("-criado_em",)

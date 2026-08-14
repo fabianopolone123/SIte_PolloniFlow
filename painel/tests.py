@@ -1,8 +1,11 @@
+from uuid import uuid4
+
 from django.test import Client, TestCase
 from django.urls import reverse
 
 from django.core.management import call_command
 
+from . import relatorio
 from .coleta import COOKIE_INTERNO, COOKIE_ORIGEM, COOKIE_VISITANTE
 from .models import Canal, Clique, Dispositivo, Visita
 
@@ -101,6 +104,197 @@ class RegistroDeCliques(TestCase):
     def test_visita_inexistente_nao_derruba_o_endereco(self):
         self.assertEqual(self.avisar(evento="whatsapp_topo", visita="999999").status_code, 204)
         self.assertEqual(Clique.objects.count(), 0)
+
+
+class MedidaDeLeitura(TestCase):
+    """O aviso de quanto a pessoa leu e por quanto tempo ficou."""
+
+    def setUp(self):
+        self.client.get("/?utm_medium=cpc", HTTP_USER_AGENT=CELULAR)
+        self.visita = Visita.objects.latest("id")
+
+    def medir(self, cliente=None, **dados):
+        dados.setdefault("visita", self.visita.pk)
+        return (cliente or self.client).post(reverse("medida"), dados)
+
+    def recarregar(self):
+        self.visita.refresh_from_db()
+        return self.visita
+
+    def test_grava_rolagem_e_tempo(self):
+        self.assertEqual(self.medir(rolagem=64, segundos=45).status_code, 204)
+        visita = self.recarregar()
+        self.assertTrue(visita.medido)
+        self.assertEqual(visita.rolagem, 64)
+        self.assertEqual(visita.segundos, 45)
+
+    def test_visita_nasce_sem_medida(self):
+        self.assertFalse(self.visita.medido)
+        self.assertEqual(self.visita.rolagem, 0)
+
+    def test_segundo_aviso_menor_nao_apaga_o_maior(self):
+        # Quem volta para a aba e sai de novo manda outro aviso. O maior vale.
+        self.medir(rolagem=90, segundos=120)
+        self.medir(rolagem=12, segundos=3)
+        visita = self.recarregar()
+        self.assertEqual(visita.rolagem, 90)
+        self.assertEqual(visita.segundos, 120)
+
+    def test_aviso_maior_substitui_o_anterior(self):
+        self.medir(rolagem=30, segundos=10)
+        self.medir(rolagem=100, segundos=200)
+        visita = self.recarregar()
+        self.assertEqual(visita.rolagem, 100)
+        self.assertEqual(visita.segundos, 200)
+
+    def test_valores_absurdos_sao_aparados(self):
+        self.medir(rolagem=8000, segundos=999999)
+        visita = self.recarregar()
+        self.assertEqual(visita.rolagem, 100)
+        self.assertEqual(visita.segundos, 30 * 60)
+
+    def test_valor_sem_sentido_nao_derruba_o_endereco(self):
+        self.assertEqual(self.medir(rolagem="abc", segundos="").status_code, 204)
+        self.assertEqual(self.recarregar().rolagem, 0)
+
+    def test_medida_de_outra_pessoa_e_ignorada(self):
+        estranho = Client()
+        estranho.cookies[COOKIE_VISITANTE] = "0" * 32
+        self.medir(estranho, rolagem=100, segundos=300)
+        visita = self.recarregar()
+        self.assertFalse(visita.medido)
+        self.assertEqual(visita.rolagem, 0)
+
+    def test_visita_inexistente_nao_derruba_o_endereco(self):
+        resposta = self.client.post(
+            reverse("medida"), {"visita": "999999", "rolagem": 50, "segundos": 20}
+        )
+        self.assertEqual(resposta.status_code, 204)
+
+
+class RelatorioDeEngajamento(TestCase):
+    """Os números que respondem 'leram a página e mesmo assim não chamaram?'."""
+
+    def visita(self, **campos):
+        campos.setdefault("visitante", uuid4().hex)
+        campos.setdefault("canal", Canal.ANUNCIO)
+        return Visita.objects.create(**campos)
+
+    def test_conta_quem_rolou_ate_o_fim(self):
+        self.visita(medido=True, rolagem=95, segundos=60)
+        self.visita(medido=True, rolagem=100, segundos=90)
+        self.visita(medido=True, rolagem=18, segundos=4)
+        self.visita(medido=True, rolagem=50, segundos=30)
+
+        dados = relatorio.montar(30)["engajamento"]
+        self.assertEqual(dados["medidas"], 4)
+        self.assertEqual(dados["ate_o_fim"], 50.0)
+        self.assertEqual(dados["so_o_topo"], 25.0)
+        self.assertEqual(dados["saida_rapida"], 25.0)
+
+    def test_tempo_tipico_usa_a_mediana(self):
+        for segundos in (5, 10, 20, 30, 600):
+            self.visita(medido=True, rolagem=40, segundos=segundos)
+
+        dados = relatorio.montar(30)["engajamento"]
+        # A aba esquecida aberta (600s) puxa a média, mas não a mediana.
+        self.assertEqual(dados["tempo_mediano"], 20)
+        self.assertEqual(dados["tempo_mediano_texto"], "20s")
+        self.assertEqual(dados["tempo_medio"], 133)
+
+    def test_tempo_longo_vira_minutos(self):
+        for _ in range(3):
+            self.visita(medido=True, rolagem=80, segundos=200)
+        dados = relatorio.montar(30)["engajamento"]
+        self.assertEqual(dados["tempo_mediano_texto"], "3min 20s")
+
+    def test_visita_nao_medida_fica_fora_das_medias(self):
+        """O ponto: visita antiga não pode virar abandono que ninguém viu."""
+        self.visita(medido=True, rolagem=100, segundos=120)
+        self.visita()  # sem medida — anterior à medição existir
+        self.visita()
+
+        dados = relatorio.montar(30)["engajamento"]
+        self.assertEqual(dados["medidas"], 1)
+        self.assertEqual(dados["total"], 3)
+        self.assertEqual(dados["ate_o_fim"], 100.0)
+        self.assertAlmostEqual(dados["cobertura"], 33.3, places=1)
+
+    def test_periodo_sem_medida_nenhuma_nao_quebra(self):
+        self.visita()
+        dados = relatorio.montar(30)["engajamento"]
+        self.assertEqual(dados["medidas"], 0)
+        self.assertEqual(dados["ate_o_fim"], 0.0)
+        self.assertEqual(dados["tempo_mediano_texto"], "—")
+
+    def test_robo_e_visita_interna_ficam_de_fora(self):
+        self.visita(medido=True, rolagem=100, segundos=200, robo=True)
+        self.visita(medido=True, rolagem=100, segundos=200, interno=True)
+        self.assertEqual(relatorio.montar(30)["engajamento"]["medidas"], 0)
+
+    def test_distribuicao_soma_as_visitas_medidas(self):
+        for rolagem in (10, 30, 60, 80, 100):
+            self.visita(medido=True, rolagem=rolagem, segundos=15)
+        faixas = relatorio.montar(30)["engajamento"]["faixas_rolagem"]
+        self.assertEqual(sum(linha["total"] for linha in faixas), 5)
+        self.assertEqual([linha["total"] for linha in faixas], [1, 1, 1, 2])
+
+    def test_anuncio_e_organico_trazem_o_proprio_engajamento(self):
+        self.visita(canal=Canal.ANUNCIO, medido=True, rolagem=15, segundos=6)
+        self.visita(canal=Canal.DIRETO, medido=True, rolagem=100, segundos=180)
+
+        comparativo = relatorio.montar(30)["comparativo"]
+        self.assertEqual(comparativo["anuncio"]["ate_o_fim"], 0.0)
+        self.assertEqual(comparativo["organico"]["ate_o_fim"], 100.0)
+        self.assertEqual(comparativo["organico"]["tempo_mediano_texto"], "3min")
+
+
+class BotaoFlutuante(TestCase):
+    """O atalho para a conversa que acompanha a rolagem."""
+
+    def test_a_pagina_traz_o_botao_flutuante(self):
+        resposta = self.client.get("/", HTTP_USER_AGENT=CELULAR)
+        self.assertContains(resposta, 'class="whatsapp-flutuante"')
+        self.assertContains(resposta, 'data-evento="whatsapp_flutuante"')
+        self.assertContains(resposta, "wa.me/5514988208134")
+
+    def test_o_clique_no_botao_flutuante_conta_como_whatsapp(self):
+        self.client.get("/?fbclid=abc", HTTP_USER_AGENT=CELULAR)
+        visita = Visita.objects.latest("id")
+        self.client.post(
+            reverse("evento"), {"evento": "whatsapp_flutuante", "visita": visita.pk}
+        )
+        self.assertEqual(Clique.objects.count(), 1)
+        self.assertEqual(relatorio.montar(30)["resumo"]["cliques"], 1)
+
+    def test_a_pagina_avisa_o_endereco_da_medicao(self):
+        resposta = self.client.get("/", HTTP_USER_AGENT=CELULAR)
+        self.assertContains(resposta, 'data-medida-url="/medida/"')
+
+
+class PaginaLimpa(TestCase):
+    def test_nenhum_comentario_vaza_para_a_pagina(self):
+        """`{# #}` no Django vale para uma linha só.
+
+        Escrito em várias linhas, ele deixa de ser comentário e o texto aparece
+        na página, à vista do visitante. Já aconteceu: uma anotação interna sobre
+        onde pôr a foto foi parar em cima do botão do WhatsApp.
+        """
+        pagina = self.client.get("/", HTTP_USER_AGENT=CELULAR).content.decode()
+        for marca in ("{#", "#}", "{% comment %}", "{% endcomment %}"):
+            self.assertNotIn(marca, pagina, f"{marca} vazou para a página")
+
+    def test_a_faixa_nao_promete_numero_que_ninguem_mediu(self):
+        pagina = self.client.get("/", HTTP_USER_AGENT=CELULAR).content.decode()
+        self.assertNotIn("-80%", pagina)
+        self.assertIn("Perguntar é de graça", pagina)
+
+    def test_o_rosto_de_quem_responde_esta_na_pagina(self):
+        pagina = self.client.get("/", HTTP_USER_AGENT=CELULAR).content.decode()
+        self.assertIn("fabiano-112.webp", pagina)
+        self.assertIn("fabiano-224.webp", pagina)  # tela retina
+        self.assertIn("fabiano-112.jpg", pagina)  # navegador sem WebP
+        self.assertIn('alt="Fabiano Polone"', pagina)
 
 
 class AcessoAoPainel(TestCase):

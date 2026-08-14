@@ -14,6 +14,29 @@ PERIODO_PADRAO = 30
 
 _SO_WHATSAPP = Q(cliques__evento__in=EVENTOS_WHATSAPP)
 
+# Rolar 90% já é ter visto a página inteira: os últimos por cento são rodapé, e
+# exigir 100 marcaria como abandono quem leu tudo o que importa.
+ATE_O_FIM = 90
+# Quem não passou daqui viu só a primeira tela e foi embora.
+SO_O_TOPO = 25
+# Abaixo disso não deu tempo de ler nem o título.
+SAIDA_RAPIDA = 10
+
+FAIXAS_ROLAGEM = (
+    (0, 25, "Só a primeira tela"),
+    (25, 50, "Um quarto da página"),
+    (50, 75, "Metade da página"),
+    (75, 101, "Quase tudo ou tudo"),
+)
+
+FAIXAS_TEMPO = (
+    (0, 10, "Menos de 10 segundos"),
+    (10, 30, "10 a 30 segundos"),
+    (30, 60, "30 segundos a 1 minuto"),
+    (60, 180, "1 a 3 minutos"),
+    (180, None, "Mais de 3 minutos"),
+)
+
 
 def periodo_valido(valor):
     try:
@@ -36,13 +59,111 @@ def _com_cliques(consulta, *campos):
     )
 
 
-def _bloco(visitas, cliques):
-    """Cartão comparativo: visitas, pessoas, cliques e taxa de conversão."""
+def _tempo_texto(segundos):
+    """Segundos em algo que se lê de relance: 8s, 45s, 2min, 3min 20s."""
+    segundos = int(segundos)
+    if segundos < 60:
+        return f"{segundos}s"
+    minutos, resto = divmod(segundos, 60)
+    return f"{minutos}min" if not resto else f"{minutos}min {resto}s"
+
+
+def _mediana(valores):
+    """A mediana diz mais que a média aqui: uma aba esquecida aberta puxa a
+    média para cima sozinha, e a mediana ignora esse tipo de exagero."""
+    if not valores:
+        return 0
+    ordenados = sorted(valores)
+    meio = len(ordenados) // 2
+    if len(ordenados) % 2:
+        return ordenados[meio]
+    return round((ordenados[meio - 1] + ordenados[meio]) / 2)
+
+
+def _distribuicao(valores, faixas):
+    """Quantos valores caem em cada faixa, com a fatia de cada uma."""
+    total = len(valores)
+    linhas = []
+    for inicio, fim, rotulo in faixas:
+        quantos = sum(
+            1 for valor in valores if valor >= inicio and (fim is None or valor < fim)
+        )
+        linhas.append(
+            {
+                "rotulo": rotulo,
+                "total": quantos,
+                "fatia": _porcentagem(quantos, total),
+            }
+        )
+    return linhas
+
+
+def _engajamento(visitas):
+    """O que o clique sozinho não conta: quanto da página viram e por quanto tempo.
+
+    Só entram as visitas medidas. Quem fechou a página antes do JavaScript rodar
+    — e todas as visitas gravadas antes desta medição existir — tem rolagem e
+    tempo zerados; incluí-las faria cada uma pesar na conta como um abandono
+    imediato que ninguém observou. Por isso o painel mostra também a cobertura:
+    de quantas visitas o número realmente saiu.
+    """
+    total = visitas.count()
+    medidas = list(visitas.filter(medido=True).values_list("rolagem", "segundos"))
+    quantidade = len(medidas)
+
+    if not quantidade:
+        return {
+            "medidas": 0,
+            "total": total,
+            "cobertura": 0.0,
+            "ate_o_fim": 0.0,
+            "so_o_topo": 0.0,
+            "saida_rapida": 0.0,
+            "rolagem_media": 0.0,
+            "tempo_mediano": 0,
+            "tempo_mediano_texto": "—",
+            "tempo_medio": 0,
+            "tempo_medio_texto": "—",
+            "faixas_rolagem": [],
+            "faixas_tempo": [],
+        }
+
+    rolagens = [rolagem for rolagem, _ in medidas]
+    tempos = [segundos for _, segundos in medidas]
+    mediana = _mediana(tempos)
+    media = round(sum(tempos) / quantidade)
+
+    return {
+        "medidas": quantidade,
+        "total": total,
+        "cobertura": _porcentagem(quantidade, total),
+        "ate_o_fim": _porcentagem(sum(1 for r in rolagens if r >= ATE_O_FIM), quantidade),
+        "so_o_topo": _porcentagem(sum(1 for r in rolagens if r < SO_O_TOPO), quantidade),
+        "saida_rapida": _porcentagem(
+            sum(1 for t in tempos if t < SAIDA_RAPIDA), quantidade
+        ),
+        "rolagem_media": round(sum(rolagens) / quantidade, 1),
+        "tempo_mediano": mediana,
+        "tempo_mediano_texto": _tempo_texto(mediana),
+        "tempo_medio": media,
+        "tempo_medio_texto": _tempo_texto(media),
+        "faixas_rolagem": _distribuicao(rolagens, FAIXAS_ROLAGEM),
+        "faixas_tempo": _distribuicao(tempos, FAIXAS_TEMPO),
+    }
+
+
+def _bloco(consulta, visitas, cliques):
+    """Cartão comparativo: visitas, pessoas, cliques, conversão e engajamento."""
+    engajamento = _engajamento(consulta)
     return {
         "visitas": visitas["visitas"],
         "pessoas": visitas["pessoas"],
         "cliques": cliques,
         "taxa": _porcentagem(cliques, visitas["visitas"]),
+        "ate_o_fim": engajamento["ate_o_fim"],
+        "tempo_mediano_texto": engajamento["tempo_mediano_texto"],
+        "rolagem_media": engajamento["rolagem_media"],
+        "medidas": engajamento["medidas"],
     }
 
 
@@ -131,10 +252,14 @@ def montar(dias):
 
     comparativo = {
         "anuncio": _bloco(
-            _totais(anuncio), cliques_whatsapp.filter(canal=Canal.ANUNCIO).count()
+            anuncio,
+            _totais(anuncio),
+            cliques_whatsapp.filter(canal=Canal.ANUNCIO).count(),
         ),
         "organico": _bloco(
-            _totais(organico), cliques_whatsapp.exclude(canal=Canal.ANUNCIO).count()
+            organico,
+            _totais(organico),
+            cliques_whatsapp.exclude(canal=Canal.ANUNCIO).count(),
         ),
     }
     comparativo["anuncio"]["fatia"] = _porcentagem(
@@ -222,6 +347,7 @@ def montar(dias):
         "primeiro_dia": primeiro_dia,
         "ultimo_dia": ultimo_dia,
         "resumo": resumo,
+        "engajamento": _engajamento(visitas),
         "comparativo": comparativo,
         "por_canal": por_canal,
         "campanhas": campanhas,

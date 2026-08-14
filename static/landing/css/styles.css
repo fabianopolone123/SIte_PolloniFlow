@@ -168,11 +168,14 @@ p {
     margin-top: 0;
 }
 
+/* O tamanho antigo servia à palavra "Polloni Flow", de uma linha só. O título
+ * agora é uma frase de oferta, então precisa de corpo menor e entrelinha maior
+ * para não empurrar o botão para fora da primeira tela. */
 h1 {
-    margin-bottom: 16px;
-    font-size: clamp(3.8rem, 9vw, 7.6rem);
-    line-height: 0.9;
-    letter-spacing: 0;
+    margin-bottom: 14px;
+    font-size: clamp(2.4rem, 5.4vw, 4.2rem);
+    line-height: 1.06;
+    letter-spacing: -0.01em;
 }
 
 .slogan {
@@ -194,6 +197,31 @@ h1 {
     flex-wrap: wrap;
     gap: 12px;
     margin-top: 30px;
+}
+
+/* As três objeções que seguram alguém que veio de um anúncio: com quem vou
+ * falar, quanto custa perguntar, quando me respondem. Ficam logo abaixo do
+ * botão, onde a dúvida aparece. */
+.hero-reforco {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 16px 0 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.hero-reforco span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.hero-reforco span::before {
+    content: "✓";
+    color: var(--green);
+    font-weight: 800;
 }
 
 .btn {
@@ -275,12 +303,15 @@ h1 {
     background: rgba(255, 255, 255, 0.035);
 }
 
+/* O corpo enorme servia aos números curtos que havia aqui ("24/7", "-80%").
+ * Agora são frases, e frase nesse tamanho quebra em quatro linhas. */
 .metric strong {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     color: var(--cyan);
-    font-size: clamp(2.2rem, 5vw, 4rem);
-    line-height: 1;
+    font-size: clamp(1.32rem, 2.6vw, 1.78rem);
+    font-weight: 800;
+    line-height: 1.15;
 }
 
 .metric span {
@@ -346,6 +377,51 @@ h2 {
 .cta-section p {
     color: var(--muted);
     line-height: 1.65;
+}
+
+/* ---------- quem responde do outro lado ----------
+ *
+ * Para mudar o tamanho da foto, troque as duas medidas abaixo: o <picture> e a
+ * imagem andam juntos, e o arquivo de 224px aguenta até 112px de exibição sem
+ * perder nitidez em tela retina.
+ */
+.quem-responde {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 24px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+}
+
+.quem-responde picture,
+.quem-responde img {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* O <picture> é inline por padrão e ficaria com uma folga embaixo da imagem. */
+.quem-responde picture {
+    display: block;
+}
+
+.quem-responde img {
+    /* A foto é clara e o fundo da seção também; sem a borda ela encosta no
+     * fundo e perde o contorno redondo. */
+    border: 1px solid var(--line);
+}
+
+.quem-responde p {
+    margin: 0;
+    font-size: 0.96rem;
+    line-height: 1.55;
+}
+
+.quem-responde b {
+    color: var(--text);
 }
 
 .flow-section {
@@ -459,6 +535,80 @@ h2 {
     }
 }
 
+/* ---------- botão flutuante do WhatsApp ----------
+ *
+ * O caminho curto até a conversa. Sem ele, quem entra pelo celular só encontra
+ * um link para o WhatsApp no fim da página, depois de umas seis telas de
+ * rolagem — e praticamente ninguém chega lá. Este acompanha a pessoa em
+ * qualquer altura da página.
+ *
+ * É só CSS, sem depender de JavaScript para aparecer: se o script falhar, o
+ * botão continua no lugar. O que o script faz é apenas contar o clique.
+ */
+.whatsapp-flutuante {
+    position: fixed;
+    right: max(16px, env(safe-area-inset-right, 0px));
+    bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 56px;
+    padding: 0 20px 0 16px;
+    border-radius: 999px;
+    color: #04111d;
+    font-size: 0.98rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--green), var(--lime));
+    box-shadow:
+        0 14px 34px rgba(89, 227, 155, 0.34),
+        0 4px 12px rgba(0, 0, 0, 0.32);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.whatsapp-flutuante svg {
+    flex: none;
+    width: 26px;
+    height: 26px;
+}
+
+.whatsapp-flutuante:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 18px 42px rgba(89, 227, 155, 0.42),
+        0 4px 12px rgba(0, 0, 0, 0.32);
+}
+
+/* Uma pulsação lenta para o olho encontrar o botão sem que ele fique piscando
+ * na cara de quem está lendo. */
+.whatsapp-flutuante::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0 rgba(89, 227, 155, 0.55);
+    animation: pulsoWhatsapp 3.4s ease-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pulsoWhatsapp {
+    60%,
+    100% {
+        box-shadow: 0 0 0 18px rgba(89, 227, 155, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .whatsapp-flutuante::before {
+        animation: none;
+    }
+}
+
+/* Espaço para o botão não cobrir o fim do rodapé. */
+.site-footer {
+    padding-bottom: 92px;
+}
+
 @media (max-width: 900px) {
     .site-header {
         padding-inline: 20px;
@@ -513,17 +663,65 @@ h2 {
 }
 
 @media (max-width: 560px) {
-    .header-action {
+    /* O "Falar agora" já foi escondido aqui, e o header é fixo: escondê-lo
+     * tirava da tela o único atalho para a conversa que acompanha a rolagem.
+     * Agora ele encolhe — quem sai de cena é o nome escrito ao lado do selo,
+     * que o selo já diz. */
+    .brand-texto {
         display: none;
     }
 
+    .header-action {
+        padding: 10px 14px;
+        font-size: 0.88rem;
+        white-space: nowrap;
+    }
+
     .site-header {
-        justify-content: center;
+        gap: 12px;
         padding-inline: 12px;
     }
 
+    /* No celular o botão flutuante fica mais discreto, para não tapar o texto
+     * enquanto a pessoa lê. */
+    .whatsapp-flutuante {
+        min-height: 52px;
+        padding: 0 18px 0 14px;
+        font-size: 0.92rem;
+    }
+
     h1 {
-        font-size: clamp(3.2rem, 17vw, 5.2rem);
+        font-size: clamp(2.05rem, 8.6vw, 2.7rem);
+    }
+
+    /* No celular tudo no topo disputa espaço com o botão. O que não ajuda a
+     * decidir sai de cena, e o botão principal ocupa a largura toda — alvo
+     * maior para o dedo e impossível de não ver. */
+    .hero {
+        padding-top: 96px;
+        padding-bottom: 56px;
+    }
+
+    .hero-copy {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .hero-actions {
+        margin-top: 24px;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+    }
+
+    .hero-reforco {
+        gap: 6px 14px;
+        font-size: 0.85rem;
+    }
+
+    .signal-row {
+        display: none;
     }
 
     .section,
