@@ -24,8 +24,8 @@ EVENTOS = {
     "whatsapp_flutuante": "Botão flutuante do WhatsApp",
     "whatsapp_topo": "Falar agora (botão do topo)",
     "whatsapp_final": "Chamar no WhatsApp (final da página)",
-    "diagnostico": "Solicitar diagnóstico",
-    "ver_solucoes": "Ver soluções",
+    "diagnostico": "Pedir orçamento (botão do hero)",
+    "ver_solucoes": "Ver o que fazemos",
     "menu_solucoes": "Menu: Soluções",
     "menu_processo": "Menu: Processo",
     "menu_contato": "Menu: Contato",
@@ -33,7 +33,17 @@ EVENTOS = {
 
 # Os botões que levam para a conversa no WhatsApp. São eles que contam como
 # "pessoa que chamou".
-EVENTOS_WHATSAPP = ("whatsapp_flutuante", "whatsapp_topo", "whatsapp_final")
+#
+# O `diagnostico` está aqui porque é o botão principal da primeira tela e leva
+# para a mesma conversa: quem clica nele chamou, e deixá-lo de fora subestimava a
+# conversão justamente no botão mais visível da página. Quem não abre conversa —
+# `ver_solucoes` e os itens de menu — continua fora.
+EVENTOS_WHATSAPP = (
+    "whatsapp_flutuante",
+    "whatsapp_topo",
+    "whatsapp_final",
+    "diagnostico",
+)
 
 
 class Visita(models.Model):

@@ -63,7 +63,7 @@ JavaScript então não envia nem clique nem medida.
 
 ### Os botões medidos
 
-Oito elementos com `data-evento`. Os três de conversão apontam para
+Oito elementos com `data-evento`. Os quatro de conversão apontam para
 `wa.me/5514988208134`, cada um com uma mensagem pré-preenchida diferente — é o que
 permite saber, já na conversa, de onde a pessoa saiu:
 
@@ -72,9 +72,9 @@ permite saber, já na conversa, de onde a pessoa saiu:
 | Atalho flutuante | `whatsapp_flutuante` | sim |
 | Botão do cabeçalho | `whatsapp_topo` | sim |
 | Botão do fim da página | `whatsapp_final` | sim |
-| Botão primário do hero | `diagnostico` | **não** — apesar de levar ao WhatsApp |
-| Botão secundário do hero | `ver_solucoes` | não |
-| Três links do menu | `menu_*` | não |
+| Botão primário do hero | `diagnostico` | sim |
+| Botão secundário do hero | `ver_solucoes` | não — leva a uma âncora |
+| Três links do menu | `menu_*` | não — levam a âncoras |
 
 O número do WhatsApp está escrito **quatro vezes** no HTML — ao trocá-lo, troque
 em todas.

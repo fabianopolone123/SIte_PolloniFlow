@@ -51,8 +51,8 @@ rota `/evento/` — assim ninguém cria evento novo mandando requisição na mã
 | `whatsapp_flutuante` | Botão flutuante do WhatsApp | Atalho fixo, acompanha a rolagem |
 | `whatsapp_topo` | Falar agora (botão do topo) | Botão do cabeçalho |
 | `whatsapp_final` | Chamar no WhatsApp (final da página) | Seção de chamada final |
-| `diagnostico` | Solicitar diagnóstico | Botão primário do hero |
-| `ver_solucoes` | Ver soluções | Botão secundário do hero |
+| `diagnostico` | Pedir orçamento (botão do hero) | Botão primário do hero — abre o WhatsApp |
+| `ver_solucoes` | Ver o que fazemos | Botão secundário do hero — leva à seção de soluções |
 | `menu_solucoes` | Menu: Soluções | Navegação |
 | `menu_processo` | Menu: Processo | Navegação |
 | `menu_contato` | Menu: Contato | Navegação |
@@ -60,12 +60,26 @@ rota `/evento/` — assim ninguém cria evento novo mandando requisição na mã
 A ordem do dicionário é a ordem em que os eventos aparecem no relatório — o
 flutuante vem primeiro porque é o atalho disponível em qualquer altura da página.
 
-`EVENTOS_WHATSAPP = ("whatsapp_flutuante", "whatsapp_topo", "whatsapp_final")` — a
-tupla dos botões que levam à conversa. **É ela que define conversão**: quando o
-painel diz "cliques" ou "taxa", está contando apenas estes três.
+```python
+EVENTOS_WHATSAPP = (
+    "whatsapp_flutuante",
+    "whatsapp_topo",
+    "whatsapp_final",
+    "diagnostico",
+)
+```
 
-Note que `diagnostico`, apesar de hoje apontar para o WhatsApp na página, **não**
-está em `EVENTOS_WHATSAPP` — ele conta como interesse, não como conversão.
+A tupla dos botões que levam à conversa. **É ela que define conversão**: quando o
+painel diz "cliques" ou "taxa", está contando apenas estes quatro.
+
+`diagnostico` é o botão principal da primeira tela e aponta para a mesma conversa
+dos outros — deixá-lo de fora subestimava a conversão justamente no botão mais
+visível da página. `ver_solucoes` e os itens de menu continuam fora: são interesse,
+não conversa.
+
+**Mudar essa tupla vale para o histórico.** A conversão é calculada na leitura, a
+partir do código do clique, e não gravada em coluna nenhuma — ao contrário do
+`canal`. Os cliques já registrados passam a contar na hora.
 
 ## `Visita`
 

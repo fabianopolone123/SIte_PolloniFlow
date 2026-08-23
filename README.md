@@ -149,7 +149,13 @@ Só códigos que estão nessa lista são aceitos — o endereço `/evento/` igno
 qualquer outra coisa.
 
 Os códigos em `EVENTOS_WHATSAPP` são os que contam como conversão: hoje o botão
-flutuante, o do topo e o do fim da página.
+flutuante, o do topo, o do fim da página e o principal da primeira tela
+(`diagnostico`) — os quatro abrem a mesma conversa. "Ver o que fazemos" e os itens
+de menu ficam fora: são interesse, não conversa.
+
+A conversão é decidida na leitura do relatório, não na gravação do clique. Então
+acrescentar um código a `EVENTOS_WHATSAPP` **vale também para o histórico**: os
+cliques que já estavam gravados passam a contar.
 
 ### A imagem do topo
 

@@ -82,7 +82,7 @@ Os termos com significado preciso:
 | **Pessoas** (nos relatórios) | Contagem de visitantes distintos. |
 | **Canal** | De onde a visita veio: anúncio pago, busca orgânica, redes sociais, outros sites ou direto. É o eixo principal de todo o painel. |
 | **Clique** | O acionamento de um botão marcado com `data-evento` na página. |
-| **Conversão** | Um clique num dos três botões de WhatsApp. A taxa é cliques ÷ visitas. |
+| **Conversão** | Um clique num dos quatro botões que abrem o WhatsApp. A taxa é cliques ÷ visitas. |
 | **Robô** | Visita de crawler ou de pré-visualização de link. Gravada, mas fora de todas as contas. |
 | **Interno** | Visita do próprio dono do site, reconhecida por cookie de aparelho. Gravada, mas fora de todas as contas. |
 | **Orgânico** | No painel, tudo que **não** é anúncio pago — inclui busca, social não paga, referência e direto. |

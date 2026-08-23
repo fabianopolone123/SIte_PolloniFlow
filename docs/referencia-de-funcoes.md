@@ -203,7 +203,7 @@ Estrutura completa em [modelo-de-dados.md](modelo-de-dados.md).
 | `Canal` | `TextChoices` | anuncio, busca, social, referencia, direto |
 | `Dispositivo` | `TextChoices` | celular, tablet, computador |
 | `EVENTOS` | `dict` | Lista de permissão dos 8 botões medidos, na ordem do relatório |
-| `EVENTOS_WHATSAPP` | `tuple` | Os três botões que contam como conversão |
+| `EVENTOS_WHATSAPP` | `tuple` | Os quatro botões que contam como conversão |
 | `Visita` | `Model` | Uma abertura da página |
 | `Visita.__str__` | método | `"Anúncio pago em 12/08/2026 14:30"` |
 | `Clique` | `Model` | Um clique num botão medido |

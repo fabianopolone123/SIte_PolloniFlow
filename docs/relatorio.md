@@ -162,7 +162,7 @@ A lista final é construída percorrendo `EVENTOS` — **na ordem do dicionário
 e não o resultado da consulta. Duas consequências boas: um botão com zero clique
 aparece com zero (e não desaparece), e a ordem da tela é estável.
 
-`whatsapp` é um booleano por linha, para o template destacar os três botões de
+`whatsapp` é um booleano por linha, para o template destacar os quatro botões de
 conversão. `largura` é a barra horizontal, normalizada pelo maior valor, com o
 mesmo truque do `+ [1]`.
 
@@ -206,6 +206,10 @@ está comentado no código por isso.
 definido uma vez no topo do módulo e reaproveitado em todo agrupamento. **É este
 `Q` que define o que o painel chama de conversão**: mudar quais botões contam é
 mudar `EVENTOS_WHATSAPP` em `models.py`, e todo o painel acompanha.
+
+Como o filtro é aplicado na leitura, a mudança **alcança o histórico**: um código
+acrescentado hoje faz os cliques antigos daquele botão entrarem na conta
+retroativamente. É o oposto do `canal`, que fica gravado na visita.
 
 ## Contrato de saída de `montar(dias)`
 

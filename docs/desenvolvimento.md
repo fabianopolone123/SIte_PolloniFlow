@@ -32,10 +32,10 @@ $env:DJANGO_DEBUG = "True"
 .venv\Scripts\python manage.py test painel
 ```
 
-**49 testes**, todos passando (verificado em 22/08/2026, Django 5.2.17). Rodam
+**52 testes**, todos passando (verificado em 22/08/2026, Django 5.2.17). Rodam
 contra um banco temporário — nunca tocam o `db.sqlite3`.
 
-As oito classes, e o que cada uma protege:
+As nove classes, e o que cada uma protege:
 
 | Classe | Testes | Cobre |
 | --- | --- | --- |
@@ -44,6 +44,7 @@ As oito classes, e o que cada uma protege:
 | `MedidaDeLeitura` | 8 | `/medida/` grava rolagem e tempo; visita nasce sem medida; aviso menor não apaga o maior; valores absurdos são aparados; medida de outra pessoa é ignorada |
 | `RelatorioDeEngajamento` | 8 | Quem rolou até o fim; a mediana como tempo típico; visita não medida fora das médias; período sem medida não quebra; robô e visita interna fora; anúncio e orgânico com o próprio engajamento |
 | `BotaoFlutuante` | 3 | A página traz o atalho flutuante; o clique nele conta como WhatsApp; a página informa o endereço da medição |
+| `ConversaoContaTodoBotaoQueAbreConversa` | 3 | O botão principal do topo conta como conversa e aponta mesmo para o WhatsApp; âncora e menu não contam |
 | `PaginaLimpa` | 3 | Nenhum comentário de template vaza para o HTML; a faixa não promete número que ninguém mediu; o rosto de quem responde está na página |
 | `AcessoAoPainel` | 3 | O painel exige login; o acesso criado pelo comando entra; senha errada não |
 | `VisitasDoDono` | 8 | Entrar marca o aparelho; visita e clique marcados ficam fora do relatório; dá para desligar e religar; visitante qualquer não mexe na contagem |
@@ -141,9 +142,13 @@ responder 204 e seguir.
    [templates/landing/index.html](../templates/landing/index.html).
 
 Nada mais. O JavaScript pega qualquer `[data-evento]`, e `/evento/` só aceita
-código que esteja na lista. Se o botão novo também levar ao WhatsApp e precisar
-contar como conversão, acrescente o código a `EVENTOS_WHATSAPP` — todo o painel
-acompanha.
+código que esteja na lista.
+
+**Se o botão abrir conversa no WhatsApp, acrescente o código a
+`EVENTOS_WHATSAPP` também** — é essa tupla que define conversão, e todo o painel
+acompanha. Um botão de WhatsApp fora dela faz a taxa sair menor do que a real, sem
+nenhum sinal de erro. Vale um teste em `ConversaoContaTodoBotaoQueAbreConversa`,
+que já cobre os dois lados: o que conta e o que não conta.
 
 ### Acrescentar um período ao painel
 

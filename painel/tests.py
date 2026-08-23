@@ -272,6 +272,35 @@ class BotaoFlutuante(TestCase):
         self.assertContains(resposta, 'data-medida-url="/medida/"')
 
 
+class ConversaoContaTodoBotaoQueAbreConversa(TestCase):
+    """Botão que leva ao WhatsApp conta como conversa; o resto, não.
+
+    O `diagnostico` é o botão principal da primeira tela e vai para a mesma
+    conversa dos outros. Ficou fora da conta por um tempo, e a conversão do
+    painel saía menor do que a real justamente no botão mais visível da página.
+    """
+
+    def clicar(self, codigo):
+        self.client.get("/", HTTP_USER_AGENT=CELULAR)
+        visita = Visita.objects.latest("id")
+        self.client.post(reverse("evento"), {"evento": codigo, "visita": visita.pk})
+        return relatorio.montar(30)["resumo"]["cliques"]
+
+    def test_o_botao_principal_do_topo_conta(self):
+        self.assertEqual(self.clicar("diagnostico"), 1)
+
+    def test_o_botao_do_hero_aponta_mesmo_para_a_conversa(self):
+        pagina = self.client.get("/", HTTP_USER_AGENT=CELULAR).content.decode()
+        antes, _, depois = pagina.partition('data-evento="diagnostico"')
+        # O href fica antes do data-evento, na mesma marcação.
+        self.assertIn("wa.me/5514988208134", antes.rsplit("<a ", 1)[-1])
+
+    def test_quem_nao_abre_conversa_nao_conta(self):
+        for codigo in ("ver_solucoes", "menu_solucoes", "menu_processo", "menu_contato"):
+            with self.subTest(codigo=codigo):
+                self.assertEqual(self.clicar(codigo), 0)
+
+
 class PaginaLimpa(TestCase):
     def test_nenhum_comentario_vaza_para_a_pagina(self):
         """`{# #}` no Django vale para uma linha só.
