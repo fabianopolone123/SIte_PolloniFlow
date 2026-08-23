@@ -9,6 +9,9 @@ O site tem duas partes:
 - um **painel de relatórios** protegido por senha (app `painel`), que mostra de
   onde vieram as visitas e quantas viraram conversa no WhatsApp.
 
+A documentação completa do projeto — estrutura, funções, contexto e as
+decisões de arquitetura — está na pasta [docs/](docs/README.md).
+
 ## Rodar localmente
 
 ```powershell
