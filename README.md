@@ -1,6 +1,6 @@
-# Site Polloni Flow
+# Site Fabiano Polloni
 
-Landing page em Django para a empresa Polloni Flow, no ar em
+Landing page em Django de Fabiano Polloni, no ar em
 <https://fabianopolone.com.br>.
 
 O site tem duas partes:

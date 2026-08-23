@@ -2,8 +2,8 @@
 
 ## O que é
 
-Um site institucional de uma página para a **Polloni Flow**, empresa de
-automação, software sob medida e integrações, no ar em
+Um site institucional de uma página de **Fabiano Polloni**, que faz automação,
+software sob medida e integrações, no ar em
 <https://fabianopolone.com.br>.
 
 O site não vende nem cadastra nada. Ele tem um único objetivo de conversão:

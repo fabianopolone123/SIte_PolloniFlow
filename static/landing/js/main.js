@@ -1,4 +1,4 @@
-/* Página inicial da Polloni Flow.
+/* Página inicial do Fabiano Polloni.
  *
  * A medição vem primeiro, de propósito. Ela é o que alimenta o painel de
  * relatórios, e antes ficava no fim do arquivo, depois da animação de fundo:

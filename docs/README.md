@@ -1,4 +1,4 @@
-# Documentação do Site Polloni Flow
+# Documentação do Site Fabiano Polloni
 
 Esta pasta descreve o projeto por inteiro: o que ele é, como está montado, o que
 cada arquivo e cada função fazem, e como mexer nele sem quebrar os relatórios.

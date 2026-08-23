@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Django command-line utility for Polloni Flow."""
+"""Django command-line utility for the Fabiano Polloni site."""
 import os
 import sys
 
