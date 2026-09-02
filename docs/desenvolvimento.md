@@ -45,7 +45,7 @@ As nove classes, e o que cada uma protege:
 | `RelatorioDeEngajamento` | 8 | Quem rolou até o fim; a mediana como tempo típico; visita não medida fora das médias; período sem medida não quebra; robô e visita interna fora; anúncio e orgânico com o próprio engajamento |
 | `BotaoFlutuante` | 3 | A página traz o atalho flutuante; o clique nele conta como WhatsApp; a página informa o endereço da medição |
 | `ConversaoContaTodoBotaoQueAbreConversa` | 3 | O botão principal do topo conta como conversa e aponta mesmo para o WhatsApp; âncora, menu e portfólio não contam |
-| `Portfolio` | 6 | A seção está na página com seis cartões; todos com stack e link; o menu leva até ela; cada projeto aponta para o site no ar; nenhum manda o visitante para o GitHub; o clique é gravado sem virar conversa |
+| `Portfolio` | 7 | A seção está na página com seis cartões; todos com stack e link; o menu leva até ela; cada projeto aponta para o site no ar; nenhum manda o visitante para o GitHub; o clique é gravado sem virar conversa |
 | `PaginaLimpa` | 3 | Nenhum comentário de template vaza para o HTML; a faixa não promete número que ninguém mediu; o rosto de quem responde está na página |
 | `AcessoAoPainel` | 3 | O painel exige login; o acesso criado pelo comando entra; senha errada não |
 | `VisitasDoDono` | 8 | Entrar marca o aparelho; visita e clique marcados ficam fora do relatório; dá para desligar e religar; visitante qualquer não mexe na contagem |
@@ -173,7 +173,11 @@ não há modelo no banco. Um projeto novo custa três passos:
    ([painel/models.py](../painel/models.py)) e acrescente o par ao dicionário
    `NO_AR` da classe `Portfolio`, em [painel/tests.py](../painel/tests.py).
    **Fora de `EVENTOS_WHATSAPP`** — ver o comentário da tupla.
-4. Confira a etiqueta de stack no `requirements.txt` e no código do projeto,
+4. **Se o link cair numa tela de login, avise no texto do cartão.** A seção
+   promete "sistemas no ar"; mandar a pessoa para um formulário de senha sem
+   aviso quebra a promessa no único clique que ela deu. É o caso do
+   `/italiano`, e `test_o_projeto_que_pede_login_avisa_antes` trava o aviso.
+5. Confira a etiqueta de stack no `requirements.txt` e no código do projeto,
    não de memória. Uma etiqueta errada é a única parte do cartão que o visitante
    não consegue conferir sozinho clicando no link.
 

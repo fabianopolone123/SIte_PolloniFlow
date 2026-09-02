@@ -35,6 +35,6 @@ o *porquê* de cada decisão e a referência de código.
 Levantado em 01/09/2026, com a seção de trabalhos entregues publicada:
 
 - Django 5.2.17, Python 3.13
-- `manage.py test painel` → **58 testes, todos passando**
+- `manage.py test painel` → **59 testes, todos passando**
 - Três migrações aplicadas em `painel`; os apps `landing` e `polloniflow` não têm modelos
 - Quinze eventos medidos, quatro deles contando como conversão

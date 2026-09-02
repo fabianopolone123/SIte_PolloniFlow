@@ -358,6 +358,17 @@ class Portfolio(TestCase):
                 antes, _, _ = self.pagina.partition(f'data-evento="{codigo}"')
                 self.assertIn(endereco, antes.rsplit("<a ", 1)[-1])
 
+    def test_o_projeto_que_pede_login_avisa_antes(self):
+        """`/italiano` abre numa tela de "Entrar", não no app.
+
+        A seção promete "sistemas no ar": mandar a pessoa para um formulário de
+        senha sem avisar quebra a promessa no único clique que ela deu. Os
+        outros cinco links abrem conteúdo direto e não precisam de aviso.
+        """
+        cartao = self.pagina.partition("Alice in Italiano")[2]
+        cartao = cartao.partition("</article>")[0]
+        self.assertIn("cadastro", cartao)
+
     def test_nenhum_projeto_manda_o_visitante_para_o_github(self):
         self.assertNotIn("github.com", self.pagina)
 
