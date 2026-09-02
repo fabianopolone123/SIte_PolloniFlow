@@ -29,6 +29,10 @@ EVENTOS = {
     "menu_solucoes": "Menu: Soluções",
     "menu_processo": "Menu: Processo",
     "menu_contato": "Menu: Contato",
+    "menu_portfolio": "Menu: Trabalhos",
+    "projeto_samela": "Portfólio: Professora Sâmela Polloni",
+    "projeto_pinhal": "Portfólio: Clube Pinhal Júnior",
+    "projeto_esperanca": "Portfólio: Ministério Esperança",
 }
 
 # Os botões que levam para a conversa no WhatsApp. São eles que contam como
@@ -37,7 +41,11 @@ EVENTOS = {
 # O `diagnostico` está aqui porque é o botão principal da primeira tela e leva
 # para a mesma conversa: quem clica nele chamou, e deixá-lo de fora subestimava a
 # conversão justamente no botão mais visível da página. Quem não abre conversa —
-# `ver_solucoes` e os itens de menu — continua fora.
+# `ver_solucoes`, os itens de menu e os links do portfólio — continua fora.
+#
+# Os `projeto_*` medem interesse, não contato: quem abre o site de um trabalho
+# entregue está se convencendo, e ainda pode chamar depois pelo botão do final
+# da página. Contá-los como conversa inflaria a taxa com quem só foi olhar.
 EVENTOS_WHATSAPP = (
     "whatsapp_flutuante",
     "whatsapp_topo",

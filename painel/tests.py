@@ -296,9 +296,63 @@ class ConversaoContaTodoBotaoQueAbreConversa(TestCase):
         self.assertIn("wa.me/5514988208134", antes.rsplit("<a ", 1)[-1])
 
     def test_quem_nao_abre_conversa_nao_conta(self):
-        for codigo in ("ver_solucoes", "menu_solucoes", "menu_processo", "menu_contato"):
+        nao_conversam = (
+            "ver_solucoes",
+            "menu_solucoes",
+            "menu_processo",
+            "menu_contato",
+            "menu_portfolio",
+            "projeto_samela",
+            "projeto_pinhal",
+            "projeto_esperanca",
+        )
+        for codigo in nao_conversam:
             with self.subTest(codigo=codigo):
                 self.assertEqual(self.clicar(codigo), 0)
+
+
+class Portfolio(TestCase):
+    """Os trabalhos entregues, e o que a página promete sobre eles.
+
+    Card sem link é decisão: o projeto roda na rede do cliente ou no celular,
+    e não existe endereço público. Estes testes travam o contrário — que todo
+    link que a página mostra leve mesmo para um site no ar, e que nenhum leve
+    para repositório, porque o público daqui é dono de empresa.
+    """
+
+    NO_AR = {
+        "projeto_samela": "https://samelapolloni.com.br",
+        "projeto_pinhal": "https://pinhaljunior.com.br",
+        "projeto_esperanca": "https://advministerioesperanca.com.br",
+    }
+
+    def setUp(self):
+        self.pagina = self.client.get("/", HTTP_USER_AGENT=CELULAR).content.decode()
+
+    def test_a_secao_esta_na_pagina(self):
+        self.assertIn('id="portfolio"', self.pagina)
+        self.assertEqual(self.pagina.count('class="portfolio-card"'), 6)
+
+    def test_o_menu_leva_ate_os_trabalhos(self):
+        self.assertIn('href="#portfolio" data-evento="menu_portfolio"', self.pagina)
+
+    def test_cada_projeto_com_link_aponta_para_o_site_no_ar(self):
+        for codigo, endereco in self.NO_AR.items():
+            with self.subTest(codigo=codigo):
+                antes, _, _ = self.pagina.partition(f'data-evento="{codigo}"')
+                self.assertIn(endereco, antes.rsplit("<a ", 1)[-1])
+
+    def test_nenhum_projeto_manda_o_visitante_para_o_github(self):
+        self.assertNotIn("github.com", self.pagina)
+
+    def test_o_clique_no_projeto_e_gravado_sem_virar_conversa(self):
+        self.client.get("/", HTTP_USER_AGENT=CELULAR)
+        visita = Visita.objects.latest("id")
+        for codigo in self.NO_AR:
+            self.client.post(reverse("evento"), {"evento": codigo, "visita": visita.pk})
+        resumo = relatorio.montar(30)["resumo"]
+        self.assertEqual(Clique.objects.count(), 3)
+        self.assertEqual(resumo["cliques"], 0)
 
 
 class PaginaLimpa(TestCase):

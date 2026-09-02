@@ -32,9 +32,10 @@ o *porquê* de cada decisão e a referência de código.
 
 ## Estado verificado
 
-Levantado em 22/08/2026, com o código no commit `9673f42`:
+Levantado em 01/09/2026, com o código no commit `447581c` mais a seção de
+trabalhos entregues:
 
 - Django 5.2.17, Python 3.13
-- `manage.py test painel` → **52 testes, todos passando**
+- `manage.py test painel` → **57 testes, todos passando**
 - Três migrações aplicadas em `painel`; os apps `landing` e `polloniflow` não têm modelos
-- Oito eventos medidos, quatro deles contando como conversão
+- Doze eventos medidos, quatro deles contando como conversão

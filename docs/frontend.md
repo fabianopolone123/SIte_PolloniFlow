@@ -14,11 +14,12 @@ com âncoras internas.
 | Seção | `id` | Conteúdo |
 | --- | --- | --- |
 | `<canvas class="network-canvas">` | `networkCanvas` | Fundo animado de partículas, `aria-hidden` |
-| `header.site-header` | — | Marca, navegação (3 âncoras) e botão "Falar agora" |
+| `header.site-header` | — | Marca, navegação (4 âncoras) e botão "Falar agora" |
 | `section.hero` | `top` | Título, pergunta, texto, dois botões, três reforços e a faixa de áreas atendidas |
 | `section.metrics` | — | Três compromissos: sob medida, você aprova antes, perguntar é de graça |
 | `section.section` | `solucoes` | Quatro cartões de solução |
 | `section.flow-section` | — | Texto + painel visual do fluxo (Entrada → Validação → Sistema → Resultado) |
+| `section.section` | `portfolio` | Seis cartões de trabalho entregue; três com link para o site no ar |
 | `section.section` | `processo` | Quatro etapas do método |
 | `section.cta-section` | `contato` | Chamada final, o bloco "quem responde sou eu" com foto e o botão grande |
 | `footer.site-footer` | — | Marca e slogan |
@@ -63,7 +64,7 @@ JavaScript então não envia nem clique nem medida.
 
 ### Os botões medidos
 
-Oito elementos com `data-evento`. Os quatro de conversão apontam para
+Doze elementos com `data-evento`. Os quatro de conversão apontam para
 `wa.me/5514988208134`, cada um com uma mensagem pré-preenchida diferente — é o que
 permite saber, já na conversa, de onde a pessoa saiu:
 
@@ -74,7 +75,12 @@ permite saber, já na conversa, de onde a pessoa saiu:
 | Botão do fim da página | `whatsapp_final` | sim |
 | Botão primário do hero | `diagnostico` | sim |
 | Botão secundário do hero | `ver_solucoes` | não — leva a uma âncora |
-| Três links do menu | `menu_*` | não — levam a âncoras |
+| Quatro links do menu | `menu_*` | não — levam a âncoras |
+| Três links do portfólio | `projeto_*` | não — levam ao site do trabalho entregue |
+
+Os `projeto_*` medem interesse, não contato. Quem abre o site de um trabalho
+entregue está se convencendo e ainda pode chamar pelo botão do fim da página;
+contá-los como conversa inflaria a taxa com quem só foi olhar.
 
 O número do WhatsApp está escrito **quatro vezes** no HTML — ao trocá-lo, troque
 em todas.

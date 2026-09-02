@@ -51,6 +51,7 @@
         </a>
         <nav class="nav-links" aria-label="Navegação principal">
             <a href="#solucoes" data-evento="menu_solucoes">Soluções</a>
+            <a href="#portfolio" data-evento="menu_portfolio">Trabalhos</a>
             <a href="#processo" data-evento="menu_processo">Processo</a>
             <a href="#contato" data-evento="menu_contato">Contato</a>
         </nav>
@@ -175,6 +176,123 @@
                 <div class="node">Sistema</div>
                 <div class="line"></div>
                 <div class="node active">Resultado</div>
+            </div>
+        </section>
+
+        {% comment %}
+        A prova. As seções acima prometem; esta mostra o que já foi entregue e
+        está rodando com gente usando.
+
+        Só entra aqui trabalho que existe de verdade. Os três primeiros abrem o
+        site no ar — é a prova mais forte que existe, e por isso são os únicos
+        com link. Os outros três rodam dentro da empresa do cliente, na rede
+        local ou no celular: não há endereço público para mostrar, e inventar um
+        seria mentira. Card sem link é honestidade, não esquecimento.
+
+        Nenhum aponta para repositório: o público desta página é dono de empresa,
+        não recrutador — e boa parte do código é de cliente.
+
+        Os `projeto_*` são medidos mas NÃO contam como conversa. Ver o comentário
+        de EVENTOS_WHATSAPP em painel/models.py antes de mexer nisso.
+        {% endcomment %}
+        <section class="section" id="portfolio">
+            <div class="section-heading" data-reveal>
+                <p class="eyebrow">Trabalhos entregues</p>
+                <h2>Sistemas que já estão no ar, com gente usando todo dia.</h2>
+            </div>
+            <div class="portfolio-grid">
+                <article class="portfolio-card" data-reveal>
+                    <h3>Professora Sâmela Polloni</h3>
+                    <p>
+                        A família monta a semana da criança e paga por Pix; a aula entra
+                        na agenda e vira mensalidade sem ninguém apertar botão. A
+                        professora ainda aplica prova pelo site e a criança vê a nota
+                        corrigida na hora.
+                    </p>
+                    <ul class="portfolio-stack">
+                        <li>Django</li>
+                        <li>Pagamento por Pix</li>
+                        <li>Painel próprio</li>
+                    </ul>
+                    <a class="portfolio-link" href="https://samelapolloni.com.br"
+                       target="_blank" rel="noreferrer" data-evento="projeto_samela">
+                        Ver no ar
+                    </a>
+                </article>
+                <article class="portfolio-card" data-reveal>
+                    <h3>Clube de Aventureiros Pinhal Júnior</h3>
+                    <p>
+                        Cadastro de responsáveis, crianças e diretoria, com permissão por
+                        menu, documentos, eventos e aviso automático no WhatsApp. Em uso
+                        pelo clube, com as famílias entrando sozinhas.
+                    </p>
+                    <ul class="portfolio-stack">
+                        <li>Django</li>
+                        <li>WhatsApp</li>
+                        <li>Permissões por perfil</li>
+                    </ul>
+                    <a class="portfolio-link" href="https://pinhaljunior.com.br"
+                       target="_blank" rel="noreferrer" data-evento="projeto_pinhal">
+                        Ver no ar
+                    </a>
+                </article>
+                <article class="portfolio-card" data-reveal>
+                    <h3>Ministério Esperança</h3>
+                    <p>
+                        Site institucional do ministério voluntário da Igreja Adventista
+                        de São Carlos, feito sobre o layout e a identidade visual
+                        aprovados pela equipe.
+                    </p>
+                    <ul class="portfolio-stack">
+                        <li>Django</li>
+                        <li>Layout sob medida</li>
+                    </ul>
+                    <a class="portfolio-link" href="https://advministerioesperanca.com.br"
+                       target="_blank" rel="noreferrer" data-evento="projeto_esperanca">
+                        Ver no ar
+                    </a>
+                </article>
+                <article class="portfolio-card" data-reveal>
+                    <h3>Consulta de preços na loja</h3>
+                    <p>
+                        O tablet do vendedor lê o código de barras pela câmera e mostra
+                        preço e estoque direto do banco do ERP. Instala com dois cliques
+                        no PC da loja, abre o banco somente para leitura e nunca grava
+                        nele.
+                    </p>
+                    <ul class="portfolio-stack">
+                        <li>Executável Windows</li>
+                        <li>Access do ERP</li>
+                        <li>Rede local</li>
+                    </ul>
+                </article>
+                <article class="portfolio-card" data-reveal>
+                    <h3>Procuro Profissional</h3>
+                    <p>
+                        Aplicativo que liga quem precisa de um serviço a quem faz: o
+                        cliente descreve o pedido, os profissionais da região recebem no
+                        celular e respondem com preço e prazo, e o WhatsApp só abre
+                        depois da escolha.
+                    </p>
+                    <ul class="portfolio-stack">
+                        <li>App Android</li>
+                        <li>API própria</li>
+                        <li>Notificação por push</li>
+                    </ul>
+                </article>
+                <article class="portfolio-card" data-reveal>
+                    <h3>Inventário de TI automático</h3>
+                    <p>
+                        Cada computador da empresa manda sozinho o próprio inventário de
+                        equipamento e software para o sistema interno. Ninguém precisa
+                        visitar máquina para saber o que existe e o que está instalado.
+                    </p>
+                    <ul class="portfolio-stack">
+                        <li>Django</li>
+                        <li>Agente em PowerShell</li>
+                        <li>Distribuição por GPO</li>
+                    </ul>
+                </article>
             </div>
         </section>
 

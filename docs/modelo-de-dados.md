@@ -56,6 +56,10 @@ rota `/evento/` — assim ninguém cria evento novo mandando requisição na mã
 | `menu_solucoes` | Menu: Soluções | Navegação |
 | `menu_processo` | Menu: Processo | Navegação |
 | `menu_contato` | Menu: Contato | Navegação |
+| `menu_portfolio` | Menu: Trabalhos | Navegação |
+| `projeto_samela` | Portfólio: Professora Sâmela Polloni | Cartão do portfólio — abre samelapolloni.com.br |
+| `projeto_pinhal` | Portfólio: Clube Pinhal Júnior | Cartão do portfólio — abre pinhaljunior.com.br |
+| `projeto_esperanca` | Portfólio: Ministério Esperança | Cartão do portfólio — abre advministerioesperanca.com.br |
 
 A ordem do dicionário é a ordem em que os eventos aparecem no relatório — o
 flutuante vem primeiro porque é o atalho disponível em qualquer altura da página.

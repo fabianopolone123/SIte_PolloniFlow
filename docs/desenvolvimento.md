@@ -44,7 +44,8 @@ As nove classes, e o que cada uma protege:
 | `MedidaDeLeitura` | 8 | `/medida/` grava rolagem e tempo; visita nasce sem medida; aviso menor não apaga o maior; valores absurdos são aparados; medida de outra pessoa é ignorada |
 | `RelatorioDeEngajamento` | 8 | Quem rolou até o fim; a mediana como tempo típico; visita não medida fora das médias; período sem medida não quebra; robô e visita interna fora; anúncio e orgânico com o próprio engajamento |
 | `BotaoFlutuante` | 3 | A página traz o atalho flutuante; o clique nele conta como WhatsApp; a página informa o endereço da medição |
-| `ConversaoContaTodoBotaoQueAbreConversa` | 3 | O botão principal do topo conta como conversa e aponta mesmo para o WhatsApp; âncora e menu não contam |
+| `ConversaoContaTodoBotaoQueAbreConversa` | 3 | O botão principal do topo conta como conversa e aponta mesmo para o WhatsApp; âncora, menu e portfólio não contam |
+| `Portfolio` | 5 | A seção está na página com seis cartões; o menu leva até ela; cada projeto com link aponta para o site no ar; nenhum manda o visitante para o GitHub; o clique é gravado sem virar conversa |
 | `PaginaLimpa` | 3 | Nenhum comentário de template vaza para o HTML; a faixa não promete número que ninguém mediu; o rosto de quem responde está na página |
 | `AcessoAoPainel` | 3 | O painel exige login; o acesso criado pelo comando entra; senha errada não |
 | `VisitasDoDono` | 8 | Entrar marca o aparelho; visita e clique marcados ficam fora do relatório; dá para desligar e religar; visitante qualquer não mexe na contagem |
@@ -64,6 +65,10 @@ rolagem registrada cairia.
 
 `test_a_faixa_nao_promete_numero_que_ninguem_mediu` — trava uma decisão de
 conteúdo, não de código: a página não volta a exibir número inventado.
+
+`test_nenhum_projeto_manda_o_visitante_para_o_github` — o portfólio é para dono
+de empresa, não para recrutador, e boa parte do código é de cliente. O teste
+trava a decisão inteira numa linha: nenhum `github.com` na página.
 
 ### Rodar um subconjunto
 
@@ -149,6 +154,31 @@ código que esteja na lista.
 acompanha. Um botão de WhatsApp fora dela faz a taxa sair menor do que a real, sem
 nenhum sinal de erro. Vale um teste em `ConversaoContaTodoBotaoQueAbreConversa`,
 que já cobre os dois lados: o que conta e o que não conta.
+
+### Acrescentar um trabalho ao portfólio
+
+A seção `#portfolio` de
+[templates/landing/index.html](../templates/landing/index.html) é escrita à mão —
+não há modelo no banco. Um projeto novo custa três passos:
+
+1. Copie um `<article class="portfolio-card" data-reveal>` e troque título, texto
+   e as etiquetas de `.portfolio-stack`.
+2. **Só ponha o link se o trabalho tiver endereço público.** Cartão sem link é
+   decisão, não esquecimento: metade dos projetos roda na rede do cliente ou no
+   celular, e não existe site para abrir. Nada de link para repositório — o
+   público da página é dono de empresa, e o teste
+   `test_nenhum_projeto_manda_o_visitante_para_o_github` recusa.
+3. Se pôs link, registre um `projeto_*` em `EVENTOS`
+   ([painel/models.py](../painel/models.py)) e acrescente o par ao dicionário
+   `NO_AR` da classe `Portfolio`, em [painel/tests.py](../painel/tests.py).
+   **Fora de `EVENTOS_WHATSAPP`** — ver o comentário da tupla.
+
+A grade é de três colunas. **Seis cartões enchem duas fileiras sem sobra**; um
+sétimo deixa um buraco que chama mais atenção que o próprio trabalho. Ou ele
+substitui um cartão fraco, ou a grade vira quatro colunas.
+
+O teste conta os cartões: mudar a quantidade quebra
+`test_a_secao_esta_na_pagina` até você atualizar o número.
 
 ### Acrescentar um período ao painel
 
