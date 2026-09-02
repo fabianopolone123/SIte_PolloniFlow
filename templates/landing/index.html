@@ -183,14 +183,18 @@
         A prova. As seções acima prometem; esta mostra o que já foi entregue e
         está rodando com gente usando.
 
-        Só entra aqui trabalho que existe de verdade. Os três primeiros abrem o
-        site no ar — é a prova mais forte que existe, e por isso são os únicos
-        com link. Os outros três rodam dentro da empresa do cliente, na rede
-        local ou no celular: não há endereço público para mostrar, e inventar um
-        seria mentira. Card sem link é honestidade, não esquecimento.
+        Só entra aqui trabalho que existe de verdade, e os seis abrem o site no
+        ar — é a prova mais forte que existe. Um projeto sem endereço público
+        (os que rodam na rede do cliente ou no celular) fica de fora enquanto
+        não houver o que mostrar: inventar link seria mentira.
 
         Nenhum aponta para repositório: o público desta página é dono de empresa,
         não recrutador — e boa parte do código é de cliente.
+
+        As etiquetas de stack dizem a tecnologia que o projeto usa de verdade,
+        conferida no requirements.txt e no código de cada um. "Mercado Pago" só
+        está no cartão da Sâmela porque lá o Pix é real, com webhook; onde o
+        pagamento é simulado, a etiqueta não entra.
 
         Os `projeto_*` são medidos mas NÃO contam como conversa. Ver o comentário
         de EVENTOS_WHATSAPP em painel/models.py antes de mexer nisso.
@@ -210,9 +214,14 @@
                         corrigida na hora.
                     </p>
                     <ul class="portfolio-stack">
-                        <li>Django</li>
-                        <li>Pagamento por Pix</li>
-                        <li>Painel próprio</li>
+                        <li>Django 6.1</li>
+                        <li>Mercado Pago</li>
+                        <li>Pix com webhook</li>
+                        <li>SQLite em WAL</li>
+                        <li>Gunicorn + systemd</li>
+                        <li>Nginx</li>
+                        <li>WhiteNoise</li>
+                        <li>Funciona sem JavaScript</li>
                     </ul>
                     <a class="portfolio-link" href="https://samelapolloni.com.br"
                        target="_blank" rel="noreferrer" data-evento="projeto_samela">
@@ -227,9 +236,14 @@
                         pelo clube, com as famílias entrando sozinhas.
                     </p>
                     <ul class="portfolio-stack">
-                        <li>Django</li>
-                        <li>WhatsApp</li>
-                        <li>Permissões por perfil</li>
+                        <li>Django 5.2</li>
+                        <li>SQLite</li>
+                        <li>Permissões por menu</li>
+                        <li>Autorização por WhatsApp</li>
+                        <li>PDV e estoque</li>
+                        <li>Pillow</li>
+                        <li>Gunicorn</li>
+                        <li>Nginx</li>
                     </ul>
                     <a class="portfolio-link" href="https://pinhaljunior.com.br"
                        target="_blank" rel="noreferrer" data-evento="projeto_pinhal">
@@ -244,8 +258,13 @@
                         aprovados pela equipe.
                     </p>
                     <ul class="portfolio-stack">
-                        <li>Django</li>
-                        <li>Layout sob medida</li>
+                        <li>Django 6.1</li>
+                        <li>Python 3.13</li>
+                        <li>SQLite</li>
+                        <li>CSS escrito à mão</li>
+                        <li>JavaScript sem dependência</li>
+                        <li>Gunicorn</li>
+                        <li>Nginx</li>
                     </ul>
                     <a class="portfolio-link" href="https://advministerioesperanca.com.br"
                        target="_blank" rel="noreferrer" data-evento="projeto_esperanca">
@@ -253,45 +272,70 @@
                     </a>
                 </article>
                 <article class="portfolio-card" data-reveal>
-                    <h3>Consulta de preços na loja</h3>
+                    <h3>Alice in Italiano</h3>
                     <p>
-                        O tablet do vendedor lê o código de barras pela câmera e mostra
-                        preço e estoque direto do banco do ERP. Instala com dois cliques
-                        no PC da loja, abre o banco somente para leitura e nunca grava
-                        nele.
+                        Estudo de italiano por repetição espaçada sobre as frases de
+                        <i>Alice no País das Maravilhas</i>. O app fala cada frase com a
+                        voz do próprio navegador e vai liberando o capítulo conforme a
+                        pessoa acerta.
                     </p>
                     <ul class="portfolio-stack">
-                        <li>Executável Windows</li>
-                        <li>Access do ERP</li>
-                        <li>Rede local</li>
+                        <li>Django 6</li>
+                        <li>SQLite</li>
+                        <li>Repetição espaçada</li>
+                        <li>Web Speech API</li>
+                        <li>Login próprio</li>
+                        <li>Gunicorn</li>
+                        <li>Nginx</li>
                     </ul>
+                    <a class="portfolio-link" href="https://fabianopolone.com.br/italiano"
+                       target="_blank" rel="noreferrer" data-evento="projeto_italiano">
+                        Ver no ar
+                    </a>
                 </article>
                 <article class="portfolio-card" data-reveal>
-                    <h3>Procuro Profissional</h3>
+                    <h3>Briefing de Site</h3>
                     <p>
-                        Aplicativo que liga quem precisa de um serviço a quem faz: o
-                        cliente descreve o pedido, os profissionais da região recebem no
-                        celular e respondem com preço e prazo, e o WhatsApp só abre
-                        depois da escolha.
+                        Cada cliente recebe um link único e responde as quinze seções do
+                        briefing no ritmo dele — salva rascunho, sai e volta pelo mesmo
+                        link. Ao enviar, o formulário trava e o aviso chega por e-mail,
+                        com logotipo, fotos e catálogos já anexados.
                     </p>
                     <ul class="portfolio-stack">
-                        <li>App Android</li>
-                        <li>API própria</li>
-                        <li>Notificação por push</li>
+                        <li>Django 5.2</li>
+                        <li>SQLite</li>
+                        <li>Link único por UUID</li>
+                        <li>Upload múltiplo</li>
+                        <li>Rascunho automático</li>
+                        <li>Pillow</li>
+                        <li>Nginx servindo os arquivos</li>
                     </ul>
+                    <a class="portfolio-link" href="https://fabianopolone.com.br/desenvolvimento"
+                       target="_blank" rel="noreferrer" data-evento="projeto_briefing">
+                        Ver no ar
+                    </a>
                 </article>
                 <article class="portfolio-card" data-reveal>
-                    <h3>Inventário de TI automático</h3>
+                    <h3>Treinador de Trade</h3>
                     <p>
-                        Cada computador da empresa manda sozinho o próprio inventário de
-                        equipamento e software para o sistema interno. Ninguém precisa
-                        visitar máquina para saber o que existe e o que está instalado.
+                        Replay de candles do mini índice para treinar operação sem
+                        dinheiro em risco: vários tempos gráficos, estudos sobre o
+                        gráfico e simulação de ordens OCO. O gráfico é desenhado à mão no
+                        canvas — 42 KB de JavaScript, nenhuma biblioteca.
                     </p>
                     <ul class="portfolio-stack">
                         <li>Django</li>
-                        <li>Agente em PowerShell</li>
-                        <li>Distribuição por GPO</li>
+                        <li>JavaScript sem biblioteca</li>
+                        <li>Canvas 2D</li>
+                        <li>requestAnimationFrame</li>
+                        <li>localStorage</li>
+                        <li>Vários tempos gráficos</li>
+                        <li>Ordens OCO</li>
                     </ul>
+                    <a class="portfolio-link" href="https://fabianopolone.com.br/TreinarTrade/"
+                       target="_blank" rel="noreferrer" data-evento="projeto_trade">
+                        Ver no ar
+                    </a>
                 </article>
             </div>
         </section>

@@ -305,6 +305,9 @@ class ConversaoContaTodoBotaoQueAbreConversa(TestCase):
             "projeto_samela",
             "projeto_pinhal",
             "projeto_esperanca",
+            "projeto_italiano",
+            "projeto_briefing",
+            "projeto_trade",
         )
         for codigo in nao_conversam:
             with self.subTest(codigo=codigo):
@@ -324,6 +327,9 @@ class Portfolio(TestCase):
         "projeto_samela": "https://samelapolloni.com.br",
         "projeto_pinhal": "https://pinhaljunior.com.br",
         "projeto_esperanca": "https://advministerioesperanca.com.br",
+        "projeto_italiano": "https://fabianopolone.com.br/italiano",
+        "projeto_briefing": "https://fabianopolone.com.br/desenvolvimento",
+        "projeto_trade": "https://fabianopolone.com.br/TreinarTrade/",
     }
 
     def setUp(self):
@@ -332,6 +338,16 @@ class Portfolio(TestCase):
     def test_a_secao_esta_na_pagina(self):
         self.assertIn('id="portfolio"', self.pagina)
         self.assertEqual(self.pagina.count('class="portfolio-card"'), 6)
+
+    def test_todo_cartao_mostra_a_stack_e_leva_a_um_site(self):
+        """Cartão sem link ou sem etiqueta de stack não entra na página.
+
+        São as duas coisas que o cartão precisa entregar: a prova (o site no ar)
+        e a informação (a tecnologia usada). Um cartão que perde uma das duas
+        vira texto de propaganda.
+        """
+        self.assertEqual(self.pagina.count('class="portfolio-stack"'), 6)
+        self.assertEqual(self.pagina.count('class="portfolio-link"'), 6)
 
     def test_o_menu_leva_ate_os_trabalhos(self):
         self.assertIn('href="#portfolio" data-evento="menu_portfolio"', self.pagina)
@@ -351,7 +367,7 @@ class Portfolio(TestCase):
         for codigo in self.NO_AR:
             self.client.post(reverse("evento"), {"evento": codigo, "visita": visita.pk})
         resumo = relatorio.montar(30)["resumo"]
-        self.assertEqual(Clique.objects.count(), 3)
+        self.assertEqual(Clique.objects.count(), len(self.NO_AR))
         self.assertEqual(resumo["cliques"], 0)
 
 

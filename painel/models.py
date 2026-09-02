@@ -33,6 +33,9 @@ EVENTOS = {
     "projeto_samela": "Portfólio: Professora Sâmela Polloni",
     "projeto_pinhal": "Portfólio: Clube Pinhal Júnior",
     "projeto_esperanca": "Portfólio: Ministério Esperança",
+    "projeto_italiano": "Portfólio: Alice in Italiano",
+    "projeto_briefing": "Portfólio: Briefing de Site",
+    "projeto_trade": "Portfólio: Treinador de Trade",
 }
 
 # Os botões que levam para a conversa no WhatsApp. São eles que contam como

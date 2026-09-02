@@ -19,7 +19,7 @@ com âncoras internas.
 | `section.metrics` | — | Três compromissos: sob medida, você aprova antes, perguntar é de graça |
 | `section.section` | `solucoes` | Quatro cartões de solução |
 | `section.flow-section` | — | Texto + painel visual do fluxo (Entrada → Validação → Sistema → Resultado) |
-| `section.section` | `portfolio` | Seis cartões de trabalho entregue; três com link para o site no ar |
+| `section.section` | `portfolio` | Seis cartões de trabalho entregue, cada um com a stack usada e o link para o site no ar |
 | `section.section` | `processo` | Quatro etapas do método |
 | `section.cta-section` | `contato` | Chamada final, o bloco "quem responde sou eu" com foto e o botão grande |
 | `footer.site-footer` | — | Marca e slogan |
@@ -64,7 +64,7 @@ JavaScript então não envia nem clique nem medida.
 
 ### Os botões medidos
 
-Doze elementos com `data-evento`. Os quatro de conversão apontam para
+Quinze elementos com `data-evento`. Os quatro de conversão apontam para
 `wa.me/5514988208134`, cada um com uma mensagem pré-preenchida diferente — é o que
 permite saber, já na conversa, de onde a pessoa saiu:
 
@@ -76,7 +76,7 @@ permite saber, já na conversa, de onde a pessoa saiu:
 | Botão primário do hero | `diagnostico` | sim |
 | Botão secundário do hero | `ver_solucoes` | não — leva a uma âncora |
 | Quatro links do menu | `menu_*` | não — levam a âncoras |
-| Três links do portfólio | `projeto_*` | não — levam ao site do trabalho entregue |
+| Seis links do portfólio | `projeto_*` | não — levam ao site do trabalho entregue |
 
 Os `projeto_*` medem interesse, não contato. Quem abre o site de um trabalho
 entregue está se convencendo e ainda pode chamar pelo botão do fim da página;

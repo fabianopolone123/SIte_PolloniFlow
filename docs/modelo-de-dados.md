@@ -60,6 +60,9 @@ rota `/evento/` — assim ninguém cria evento novo mandando requisição na mã
 | `projeto_samela` | Portfólio: Professora Sâmela Polloni | Cartão do portfólio — abre samelapolloni.com.br |
 | `projeto_pinhal` | Portfólio: Clube Pinhal Júnior | Cartão do portfólio — abre pinhaljunior.com.br |
 | `projeto_esperanca` | Portfólio: Ministério Esperança | Cartão do portfólio — abre advministerioesperanca.com.br |
+| `projeto_italiano` | Portfólio: Alice in Italiano | Cartão do portfólio — abre /italiano |
+| `projeto_briefing` | Portfólio: Briefing de Site | Cartão do portfólio — abre /desenvolvimento |
+| `projeto_trade` | Portfólio: Treinador de Trade | Cartão do portfólio — abre /TreinarTrade/ |
 
 A ordem do dicionário é a ordem em que os eventos aparecem no relatório — o
 flutuante vem primeiro porque é o atalho disponível em qualquer altura da página.

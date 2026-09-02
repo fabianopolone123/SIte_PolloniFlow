@@ -45,7 +45,7 @@ As nove classes, e o que cada uma protege:
 | `RelatorioDeEngajamento` | 8 | Quem rolou até o fim; a mediana como tempo típico; visita não medida fora das médias; período sem medida não quebra; robô e visita interna fora; anúncio e orgânico com o próprio engajamento |
 | `BotaoFlutuante` | 3 | A página traz o atalho flutuante; o clique nele conta como WhatsApp; a página informa o endereço da medição |
 | `ConversaoContaTodoBotaoQueAbreConversa` | 3 | O botão principal do topo conta como conversa e aponta mesmo para o WhatsApp; âncora, menu e portfólio não contam |
-| `Portfolio` | 5 | A seção está na página com seis cartões; o menu leva até ela; cada projeto com link aponta para o site no ar; nenhum manda o visitante para o GitHub; o clique é gravado sem virar conversa |
+| `Portfolio` | 6 | A seção está na página com seis cartões; todos com stack e link; o menu leva até ela; cada projeto aponta para o site no ar; nenhum manda o visitante para o GitHub; o clique é gravado sem virar conversa |
 | `PaginaLimpa` | 3 | Nenhum comentário de template vaza para o HTML; a faixa não promete número que ninguém mediu; o rosto de quem responde está na página |
 | `AcessoAoPainel` | 3 | O painel exige login; o acesso criado pelo comando entra; senha errada não |
 | `VisitasDoDono` | 8 | Entrar marca o aparelho; visita e clique marcados ficam fora do relatório; dá para desligar e religar; visitante qualquer não mexe na contagem |
@@ -163,15 +163,19 @@ não há modelo no banco. Um projeto novo custa três passos:
 
 1. Copie um `<article class="portfolio-card" data-reveal>` e troque título, texto
    e as etiquetas de `.portfolio-stack`.
-2. **Só ponha o link se o trabalho tiver endereço público.** Cartão sem link é
-   decisão, não esquecimento: metade dos projetos roda na rede do cliente ou no
-   celular, e não existe site para abrir. Nada de link para repositório — o
-   público da página é dono de empresa, e o teste
+2. **O trabalho precisa de endereço público para entrar.** É o que o cartão
+   promete, e `test_todo_cartao_mostra_a_stack_e_leva_a_um_site` recusa cartão
+   sem link ou sem etiqueta de stack. Projeto que roda na rede do cliente ou no
+   celular espera até ter o que mostrar — inventar link seria mentira. Nada de
+   link para repositório: o público da página é dono de empresa, e o teste
    `test_nenhum_projeto_manda_o_visitante_para_o_github` recusa.
-3. Se pôs link, registre um `projeto_*` em `EVENTOS`
+3. Registre um `projeto_*` em `EVENTOS`
    ([painel/models.py](../painel/models.py)) e acrescente o par ao dicionário
    `NO_AR` da classe `Portfolio`, em [painel/tests.py](../painel/tests.py).
    **Fora de `EVENTOS_WHATSAPP`** — ver o comentário da tupla.
+4. Confira a etiqueta de stack no `requirements.txt` e no código do projeto,
+   não de memória. Uma etiqueta errada é a única parte do cartão que o visitante
+   não consegue conferir sozinho clicando no link.
 
 A grade é de três colunas. **Seis cartões enchem duas fileiras sem sobra**; um
 sétimo deixa um buraco que chama mais atenção que o próprio trabalho. Ou ele
